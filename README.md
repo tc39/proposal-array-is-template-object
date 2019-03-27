@@ -60,7 +60,7 @@ When the `isTemplateObject` method is called with argument *value* the following
 1. Let *result* be IsTemplateObject(*value*)
 1. Return *result*
 
-### Runtime Semantics: IsTemplateObject ( *value* )
+### 22.1.2.x.x Runtime Semantics: IsTemplateObject ( *value* )
 
 The abstract operation IsTemplateObject is called with a value, *strings*, as an argument.
 It performs the following steps:
