@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "proposal-array-is-template-object",
   "version": "1.0.0",
   "description": "npm, I just want to run some tests",
@@ -7,6 +8,7 @@
     "test": "test"
   },
   "scripts": {
+    "build": "ecmarkup spec.emu > index.html",
     "test": "mocha"
   },
   "repository": {
@@ -21,6 +23,7 @@
   "homepage": "https://github.com/mikesamuel/proposal-array-is-template-object#readme",
   "devDependencies": {
     "chai": "^4.2.0",
+    "ecmarkup": "^3.16.0",
     "mocha": "^6.0.2",
     "pre-commit": "^1.2.2"
   },
