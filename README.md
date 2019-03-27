@@ -33,7 +33,7 @@ is not the case.
 
 ```js
 function (trustedStrings, ...untrustedArguments) {
-  if (!ArrayisTemplateObject(trustedStrings)) {
+  if (!Array.isTemplateObject(trustedStrings)) {
     // Do not trust trustedStrings
   }
   // Proceed knowing that trustedStrings 
