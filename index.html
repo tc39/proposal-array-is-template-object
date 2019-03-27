@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="./spec.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
 <script src="./spec.js"></script>
-<title>Array.isTemplateObject</title><script type="application/json" id="menu-search-biblio">[{"type":"clause","id":"sec-demo-clause","aoid":null,"title":"This is an emu-clause","titleHTML":"This is an emu-clause","number":"1","namespace":"<no location>","location":"","referencingIds":[],"key":"This is an emu-clause"},{"type":"clause","id":"sec-copyright-and-software-license","aoid":null,"title":"Copyright & Software License","titleHTML":"Copyright &amp; Software License","number":"A","namespace":"<no location>","location":"","referencingIds":[],"key":"Copyright & Software License"}]</script><script>"use strict";
+<title>Array.isTemplateObject</title><script type="application/json" id="menu-search-biblio">[{"type":"clause","id":"sec-Array.isTemplateObject","aoid":null,"title":"Array.isTemplateObject ( value )","titleHTML":"Array.isTemplateObject ( <var>value</var> )","number":"1","namespace":"<no location>","location":"","referencingIds":[],"key":"Array.isTemplateObject ( value )"},{"type":"clause","id":"sec-IsTemplateObject","aoid":null,"title":"Runtime Semantics: IsTemplateObject ( value )","titleHTML":"Runtime Semantics: IsTemplateObject ( <var>value</var> )","number":"2","namespace":"<no location>","location":"","referencingIds":[],"key":"Runtime Semantics: IsTemplateObject ( value )"},{"type":"clause","id":"sec-copyright-and-software-license","aoid":null,"title":"Copyright & Software License","titleHTML":"Copyright &amp; Software License","number":"A","namespace":"<no location>","location":"","referencingIds":[],"key":"Copyright & Software License"}]</script><script>"use strict";
 
 function Search(menu) {
   this.menu = menu;
@@ -1805,12 +1805,32 @@ li.menu-search-result-term:before {
     display: none; 
   }
 }
-</style></head><body><div id="menu-toggle">☰</div><div id="menu-spacer"></div><div id="menu"><div id="menu-search"><input type="text" id="menu-search-box" placeholder="Search..."><div id="menu-search-results" class="inactive"></div></div><div id="menu-pins"><div class="menu-pane-header">Pins</div><ul id="menu-pins-list"></ul></div><div class="menu-pane-header">Table of Contents</div><div id="menu-toc"><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-demo-clause" title="This is an emu-clause"><span class="secnum">1</span> This is an emu-clause</a></li><li><span class="item-toggle-none"></span><a href="#sec-copyright-and-software-license" title="Copyright &amp; Software License"><span class="secnum">A</span> Copyright &amp; Software License</a></li></ol></div></div><div id="spec-container"><h1 class="version first">Stage 0 Draft / March 27, 2019</h1><h1 class="title">Array.isTemplateObject</h1>
+</style></head><body><div id="menu-toggle">☰</div><div id="menu-spacer"></div><div id="menu"><div id="menu-search"><input type="text" id="menu-search-box" placeholder="Search..."><div id="menu-search-results" class="inactive"></div></div><div id="menu-pins"><div class="menu-pane-header">Pins</div><ul id="menu-pins-list"></ul></div><div class="menu-pane-header">Table of Contents</div><div id="menu-toc"><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-Array.isTemplateObject" title="Array.isTemplateObject ( value )"><span class="secnum">1</span> Array.isTemplateObject ( <var>value</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-IsTemplateObject" title="Runtime Semantics: IsTemplateObject ( value )"><span class="secnum">2</span> RS: IsTemplateObject ( <var>value</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-copyright-and-software-license" title="Copyright &amp; Software License"><span class="secnum">A</span> Copyright &amp; Software License</a></li></ol></div></div><div id="spec-container"><h1 class="version first">Stage 0 Draft / March 27, 2019</h1><h1 class="title">Array.isTemplateObject</h1>
 
-<emu-clause id="sec-demo-clause">
-  <h1><span class="secnum">1</span>This is an emu-clause</h1>
-  <p>This is an algorithm:</p>
-  <emu-alg><ol><li>Let <var>proposal</var> be <emu-val>undefined</emu-val>.</li><li>If IsAccepted(<var>proposal</var>),<ol><li>Let <var>stage</var> be <emu-val>0</emu-val>.</li></ol></li><li>Else,<ol><li>Let <var>stage</var> be <emu-val>-1</emu-val>.</li></ol></li><li>Return ?&nbsp;<emu-xref aoid="ToString" id="_ref_0"><a href="https://tc39.github.io/ecma262/#sec-tostring">ToString</a></emu-xref>(<var>proposal</var>).
+<p>This adds a builtin static method to Array to allow distinguishing template string literal objects</p>
+
+<p>Added under
+  
+  <a href="https://www.ecma-international.org/ecma-262/#sec-properties-of-the-array-constructor">Properties of the Array Constructor</a>:
+
+</p>
+
+<emu-clause id="sec-Array.isTemplateObject">
+  <h1><span class="secnum">1</span>Array.isTemplateObject ( <var>value</var> )</h1>
+
+  <p>When the <code>isTemplateObject</code> method is called with argument <var>value</var> the following steps are taken:</p>
+
+  <emu-alg><ol><li>Let <var>result</var> be IsTemplateObject(<var>value</var>).</li><li>Return <var>result</var>.
+  </li></ol></emu-alg>
+</emu-clause>
+
+<emu-clause id="sec-IsTemplateObject">
+  <h1><span class="secnum">2</span>Runtime Semantics: IsTemplateObject ( <var>value</var> )</h1>
+
+  <p>The abstract operation IsTemplateObject is called with a value, <var>value</var>, as an argument.
+    It performs the following steps:</p>
+
+  <emu-alg aoid="IsTemplateObject"><ol><li>Let <var>realm</var> be <emu-xref href="#current-realm"><a href="https://tc39.github.io/ecma262/#current-realm">the current Realm Record</a></emu-xref>.</li><li>Let <var>templateRegistry</var> be <var>realm</var>.[[TemplateMap]].</li><li>For each element <var>e</var> of <var>templateRegistry</var>, do<ol><li>If <var>e</var>.[[Array]] is the same value as <var>values</var>, then<ol><li>Return <emu-val>true</emu-val>.</li></ol></li></ol></li><li>Return <emu-val>false</emu-val>.
   </li></ol></emu-alg>
 </emu-clause><emu-annex id="sec-copyright-and-software-license">
       <h1><span class="secnum">A</span>Copyright &amp; Software License</h1>

@@ -9,15 +9,36 @@ stage: 0
 contributors: Mike Samuel
 </pre>
 
-<emu-clause id="sec-demo-clause">
-  <h1>This is an emu-clause</h1>
-  <p>This is an algorithm:</p>
+<p>This adds a builtin static method to Array to allow distinguishing template string literal objects</p>
+
+<p>Added under
+  <a href="https://www.ecma-international.org/ecma-262/#sec-properties-of-the-array-constructor"
+     >Properties of the Array Constructor</a>:
+</p>
+
+<emu-clause id="sec-Array.isTemplateObject">
+  <h1>Array.isTemplateObject ( _value_ )</h1>
+
+  <p>When the `isTemplateObject` method is called with argument _value_ the following steps are taken:</p>
+
   <emu-alg>
-    1. Let _proposal_ be *undefined*.
-    1. If IsAccepted(_proposal_),
-      1. Let _stage_ be *0*.
-    1. Else,
-      1. Let _stage_ be *-1*.
-    1. Return ? ToString(_proposal_).
+    1. Let _result_ be IsTemplateObject(_value_).
+    1. Return _result_.
+  </emu-alg>
+</emu-clause>
+
+<emu-clause id="sec-IsTemplateObject">
+  <h1>Runtime Semantics: IsTemplateObject ( _value_ )</h1>
+
+  <p>The abstract operation IsTemplateObject is called with a value, _value_, as an argument.
+    It performs the following steps:</p>
+
+  <emu-alg aoid="IsTemplateObject">
+    1. Let _realm_ be the current Realm Record.
+    1. Let _templateRegistry_ be _realm_.[[TemplateMap]].
+    1. For each element _e_ of _templateRegistry_, do
+      1. If _e_.[[Array]] is the same value as _values_, then
+        1. Return *true*.
+    1. Return *false*.
   </emu-alg>
 </emu-clause>
