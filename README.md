@@ -58,7 +58,7 @@ so this check is still useful.
 
 This is not an attempt to determine whether the current function was called as a template literal.
 See the linked issue as to why that is untenable.  Especially the discussion around threat models,
-`eval` and tail-call optimizations that weighed against alternate approahces.
+`eval` and tail-call optimizations that weighed against alternate approaches.
 
 ## Possible Spec Language
 
@@ -194,7 +194,7 @@ for (const [ message, f ] of negTestCases) {
 }
 
 if (falsePositives.length) {
-  $ERROR(`#1: Array.isTemplateObject producing spurious positiive results: ${ falsePositives }`);
+  $ERROR(`#1: Array.isTemplateObject producing spurious positive results: ${ falsePositives }`);
 }
 if (falseNegatives.length) {
   $ERROR(`#2: Array.isTemplateObject producing spurious negative results: ${ falseNegatives }`);
