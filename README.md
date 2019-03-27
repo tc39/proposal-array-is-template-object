@@ -138,7 +138,7 @@ var negTestCases = [
   [ 'string', () => directTag('foo') ],
   [ 'function', () => directTag(directTag) ],
   [ 'proxy', () => directTag(new Proxy(escapedStrings, {})) ],
-  [ 
+  [
     'forgery',
     () => {
       let arr = [ 'foo' ];
@@ -178,10 +178,12 @@ var negTestCases = [
   // TODO: cross realm test is negative
 ];
 
+var falseNegatives = [];
+
 for (const [ message, f ] of negTestCases) {
   let result = null;
   try {
-    result = !f();
+    result = f();
   } catch (e) {
     falseNegatives.push(message + ' threw');
     continue;
