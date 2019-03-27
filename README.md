@@ -36,7 +36,7 @@ function (trustedStrings, ...untrustedArguments) {
   if (!Array.isTemplateObject(trustedStrings)) {
     // Do not trust trustedStrings
   }
-  // Proceed knowing that trustedStrings 
+  // Proceed knowing that trustedStrings
 }
 ```
 
@@ -62,46 +62,37 @@ See the linked issue as to why that is untenable.  Especially the discussion aro
 
 ## Possible Spec Language
 
-Added under [Properties of the Array Constructor](https://www.ecma-international.org/ecma-262/#sec-properties-of-the-array-constructor)
-
-### 22.1.2.x Array.isTemplateObject ( *value* )
-
-When the `isTemplateObject` method is called with argument *value* the following steps are taken:
-
-1. Let *result* be IsTemplateObject(*value*)
-1. Return *result*
-
-### 22.1.2.x.x Runtime Semantics: IsTemplateObject ( *value* )
-
-The abstract operation IsTemplateObject is called with a value, *value*, as an argument.
-It performs the following steps:
-
-1. Let *realm* be the [current Realm Record](https://www.ecma-international.org/ecma-262/#current-realm).
-1. Let *templateRegistry* be *realm*.\[\[TemplateMap\]\].
-1. For each element *e* of *templateRegistry*, do
-    1. If *e*.\[\[Array\]\] is the same value as *value*, then
-        1. Return **true**.
-1. Return **false**.
+You can browse the [ecmarkup output](https://mikesamuel.github.io/proposal-array-is-template-object/)
+or browse the [source](https://github.com/mikesamuel/proposal-array-is-template-object/blob/master/spec.emu).
 
 ## test262 draft
 
 Added under [test/built-ins/Array](https://github.com/tc39/test262/tree/master/test/built-ins/Array)
 
 ```js
+// A template tag that applies the function under test
+// and returns its result.
 function directTag(strings) {
   return Array.isTemplateObject(strings);
 }
 
+// A template tag that does the same but passes its
+// argument via normal function application.
 function indirectTag(strings) {
   return directTag(strings);
 }
 
+// A template object that escapes the tag function body.
 var escapedStrings = null;
 ((x) => (escapedStrings = x))`foo ${ null } bar`;
 
+// Things that out be recognized as template objects.
+// Elements are [ description, candidate value ] pairs.
 var posTestCases = [
   [ 'direct', () => directTag`foo` ],
+  // It doesn't matter whether the strings were used with the tag that's running.
   [ 'indirect', () => indirectTag`bar` ],
+  // Or whether there is even a tag function on the stack.
   [ 'escaped', () => Array.isTemplateObject(escapedStrings) ],
 ];
 
@@ -120,7 +111,10 @@ for (const [ message, f ] of posTestCases) {
   }
 }
 
+// Things that should not be recognized as template objects.
+// Elements are [ description, candidate value ] pairs.
 var negTestCases = [
+  // Common values are not template string objects.
   [ 'zero args', () => directTag() ],
   [ 'null', () => directTag(null) ],
   [ 'undefined', () => directTag(undefined) ],
@@ -137,7 +131,9 @@ var negTestCases = [
   [ 'empty string', () => directTag('') ],
   [ 'string', () => directTag('foo') ],
   [ 'function', () => directTag(directTag) ],
+  // A proxy over a template string object is not a template string object.
   [ 'proxy', () => directTag(new Proxy(escapedStrings, {})) ],
+  // User code can't distinguish this case which is why this proposal adds value.
   [
     'forgery',
     () => {
@@ -147,6 +143,7 @@ var negTestCases = [
       return directTag(arr);
     }
   ],
+  // The implementation shouldn't muck with its argument.
   [
     'argument not poked', () => {
       let poked = false;
@@ -175,6 +172,9 @@ var negTestCases = [
       return Array.isTemplateObject(arg) || poked;
     }
   ],
+  // Since a motivating use case is to identify strings that originated within
+  // the current origin, it shouldn't return true for a template object that
+  // originated in a different realm.
   // TODO: cross realm test is negative
 ];
 
