@@ -5,12 +5,12 @@ called with a template string bundle.
 
 **Table of Contents**
 
-* [Use cases & Prior Discussions](#use-cases---prior-discussions)
+* [Use cases & Prior Discussions](#use-cases--prior-discussions)
   + [Distinguishing strings from a trusted developer from strings that may be attacker controlled](#distinguishing-strings-from-a-trusted-developer-from-strings-that-may-be-attacker-controlled)
 * [What this is not](#what-this-is-not)
 * [Possible Spec Language](#possible-spec-language)
-  + [22.1.2.x Array.isTemplateObject ( *value* )](#2212x-arrayistemplateobject----value---)
-  + [22.1.2.x.x Runtime Semantics: IsTemplateObject ( *value* )](#2212xx-runtime-semantics--istemplateobject----value---)
+  + [22.1.2.x Array.isTemplateObject ( *value* )](#2212x-arrayistemplateobject--value-)
+  + [22.1.2.x.x Runtime Semantics: IsTemplateObject ( *value* )](#2212xx-runtime-semantics-istemplateobject--value-)
 * [test262 draft](#test262-draft)
 
 
