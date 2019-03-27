@@ -141,9 +141,9 @@ var negTestCases = [
   [
     'forgery',
     () => {
-      let arr = [ 'foo' ];
-      arr.raw = arr;  // TODO Enumerable?
-      Object.freeze(arr);  // TODO and/or seal?
+      let arr = [ 'really really real' ];
+      Object.defineProperty(arr, 'raw', { value: arr });
+      Object.freeze(arr);
       return directTag(arr);
     }
   ],
