@@ -32,7 +32,7 @@ function (trustedStrings, ...untrustedArguments) {
 This assumes that an attacker cannot get a string to `eval` or `new Function` as in
 
 ```js
-const attackerControlledString = '((x) => x)`evil string`;
+const attackerControlledString = '((x) => x)`evil string`';
 
 // Naive code
 let x = eval(attackerControlledString)
