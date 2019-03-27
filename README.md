@@ -11,8 +11,37 @@ Issue [WICG/trusted-types#96](https://github.com/WICG/trusted-types/issues/96)
 describes a scenario where a template tag assumes that the literal strings were
 authored by a trusted developer but that the interpolated values may not be.
 
+```js
+result = sensitiveOperation`trusted0 ${ untrusted } trusted1`
+// Authored by dev          ^^^^^^^^                ^^^^^^^^
+// May come from outside                ^^^^^^^^^
+```
+
 This proposal would provide enough context to warn or erroring out when this
 is not the case.
+
+```js
+function (trustedStrings, ...untrustedArguments) {
+  if (!ArrayisTemplateObject(trustedStrings)) {
+    // Do not trust trustedStrings
+  }
+  // Proceed knowing that trustedStrings 
+}
+```
+
+This assumes that an attacker cannot get a string to `eval` or `new Function` as in
+
+```js
+const attackerControlledString = '((x) => x)`evil string`;
+
+// Naive code
+let x = eval(attackerControlledString)
+
+console.log(Array.isTemplateObject(x));
+```
+
+Many other security assumptions break if an attacker can execute arbitrary code,
+so this check is still useful.
 
 ## What this is not
 
