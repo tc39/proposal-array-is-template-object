@@ -73,13 +73,13 @@ When the `isTemplateObject` method is called with argument *value* the following
 
 ### 22.1.2.x.x Runtime Semantics: IsTemplateObject ( *value* )
 
-The abstract operation IsTemplateObject is called with a value, *strings*, as an argument.
+The abstract operation IsTemplateObject is called with a value, *value*, as an argument.
 It performs the following steps:
 
 1. Let *realm* be the [current Realm Record](https://www.ecma-international.org/ecma-262/#current-realm).
 1. Let *templateRegistry* be *realm*.\[\[TemplateMap\]\].
 1. For each element *e* of *templateRegistry*, do
-    1. If *e*.\[\[Array\]\] is the same value as *strings*, then
+    1. If *e*.\[\[Array\]\] is the same value as *value*, then
         1. Return **true**.
 1. Return **false**.
 
