@@ -21,6 +21,10 @@
   "homepage": "https://github.com/mikesamuel/proposal-array-is-template-object#readme",
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^6.0.2"
-  }
+    "mocha": "^6.0.2",
+    "pre-commit": "^1.2.2"
+  },
+  "pre-commit": [
+    "test"
+  ]
 }
