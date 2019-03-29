@@ -1,4 +1,4 @@
-// Check that the testcases in the README are semi-valid JS given
+// Check that the test262 tests do something sensible when run against
 // a known problematic stub implementation of Array.isTemplateObject.
 
 const fs = require('fs');
@@ -9,7 +9,7 @@ const { expect } = require('chai');
 describe('README.md', () => {
   describe('test262', () => {
     beforeEach(() => {
-      Array.isTemplateObject = function (value) {
+      Array.isTemplateObject = function isTemplateObject(value) {
         return value instanceof Array;
       };
     });
@@ -18,16 +18,14 @@ describe('README.md', () => {
     });
 
     it('runs, kind of', () => {
-      const readmeContent = fs.readFileSync(
-        path.join(__dirname, '..', 'README.md'),
+      const testContent = fs.readFileSync(
+        path.join(
+          __dirname, '..',
+          'test262', 'test', 'built-ins', 'Array', 'is-template-object.js'),
         { encoding: 'UTF-8' });
 
-      const contentAfterTest262Header =
-        /^## test262.*\n([\s\S]*)/m.exec(readmeContent)[1];
-
-      const firstFencedCodeBlockContent =
-        /\n```js\n([\s\S]*?)\n```/.exec(contentAfterTest262Header)[1];
-
+      // Stub out some of the API provided at
+      // https://github.com/tc39/test262/blob/master/INTERPRETING.md#host-defined-functions
       const test262stubErrorList = [];
       function $ERROR(msg) {
         test262stubErrorList[test262stubErrorList.length] = msg;
@@ -39,7 +37,10 @@ describe('README.md', () => {
         },
       }
 
-      eval(firstFencedCodeBlockContent);
+      // Evaluate the test content.
+      new Function(
+        '$ERROR', '$262', testContent)(
+        ($ERROR), ($262));
 
       expect(test262stubErrorList)
         .to.deep.equal([
