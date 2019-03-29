@@ -29,7 +29,7 @@ var foreignTemplateObject = null;
     (new realm.global.Function('return ((x) => x)`foreign strings`;'))();
 })();
 
-// Things that out be recognized as template objects.
+// Things that ought be recognized as template objects.
 // Elements are [ description, candidate value ] pairs.
 var posTestCases = [
   [ 'direct', () => directTag`foo` ],
@@ -145,7 +145,7 @@ for (const [ message, f ] of negTestCases) {
 }
 
 if (falsePositives.length) {
-  $ERROR(`#1: Array.isTemplateObject producing spurious positiive results: ${ falsePositives }`);
+  $ERROR(`#1: Array.isTemplateObject producing spurious positive results: ${ falsePositives }`);
 }
 if (falseNegatives.length) {
   $ERROR(`#2: Array.isTemplateObject producing spurious negative results: ${ falseNegatives }`);
