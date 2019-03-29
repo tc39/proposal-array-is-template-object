@@ -4,9 +4,6 @@
   "version": "1.0.0",
   "description": "npm, I just want to run some tests",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "build": "ecmarkup spec.emu > index.html",
     "test": "mocha"

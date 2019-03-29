@@ -3,13 +3,14 @@
 
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 const { expect } = require('chai');
 
 describe('README.md', () => {
   describe('test262', () => {
     beforeEach(() => {
       Array.isTemplateObject = function (value) {
-        return Array.isArray(value);
+        return value instanceof Array;
       };
     });
     afterEach(() => {
@@ -30,6 +31,12 @@ describe('README.md', () => {
       const test262stubErrorList = [];
       function $ERROR(msg) {
         test262stubErrorList[test262stubErrorList.length] = msg;
+      }
+
+      const $262 = {
+        createRealm() {
+          return { global: vm.runInNewContext('this') };
+        },
       }
 
       eval(firstFencedCodeBlockContent);

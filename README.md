@@ -86,6 +86,12 @@ function indirectTag(strings) {
 var escapedStrings = null;
 ((x) => (escapedStrings = x))`foo ${ null } bar`;
 
+var foreignStrings = null;
+(() => {
+  const realm = $262.createRealm();
+  foreignStrings = (new realm.global.Function('return ((x) => x)`foreign strings`;'))();
+})();
+
 // Things that out be recognized as template objects.
 // Elements are [ description, candidate value ] pairs.
 var posTestCases = [
@@ -175,7 +181,10 @@ var negTestCases = [
   // Since a motivating use case is to identify strings that originated within
   // the current origin, it shouldn't return true for a template object that
   // originated in a different realm.
-  // TODO: cross realm test is negative
+  [
+    'cross-realm strings',
+    () => Array.isTemplateObject(foreignStrings),
+  ],
 ];
 
 var falseNegatives = [];
