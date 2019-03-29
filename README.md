@@ -68,6 +68,6 @@ or browse the [source](https://github.com/mikesamuel/proposal-array-is-template-
 ## Tests
 
 The test262
-[draft tests](https://github.com/mikesamuel/proposal-array-is-template-object/blob/master/test/built-ins/Array/)
+[draft tests](https://github.com/mikesamuel/proposal-array-is-template-object/blob/master/test262/test/built-ins/Array/is-template-object.js)
 which would be added under
 [test/built-ins/Array](https://github.com/tc39/test262/tree/master/test/built-ins/Array)
