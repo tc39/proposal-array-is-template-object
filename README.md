@@ -58,7 +58,7 @@ so this check is still useful.
 
 This is not an attempt to determine whether the current function was called as a template literal.
 See the linked issue as to why that is untenable.  Especially the discussion around threat models,
-`eval` and tail-call optimizations that weighed against alternate approahces.
+`eval` and tail-call optimizations that weighed against alternate approaches.
 
 ## Possible Spec Language
 
