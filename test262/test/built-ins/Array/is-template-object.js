@@ -95,8 +95,13 @@ var negTestCases = [
   [
     'argument not poked', () => {
       let poked = false;
+      // Use a proxy to see if isTemplateObject
+      // mucks with arg in an observable way.
       let arg = new Proxy(
         [],
+        // The proxy handler is itself a proxy which
+        // flips the poked bit if any proxy trap is
+        // invoked.
         new Proxy(
           {},
           {
