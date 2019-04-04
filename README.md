@@ -9,9 +9,7 @@ called with a template string bundle.
   + [Distinguishing strings from a trusted developer from strings that may be attacker controlled](#distinguishing-strings-from-a-trusted-developer-from-strings-that-may-be-attacker-controlled)
 * [What this is not](#what-this-is-not)
 * [Possible Spec Language](#possible-spec-language)
-  + [22.1.2.x Array.isTemplateObject ( *value* )](#2212x-arrayistemplateobject--value-)
-  + [22.1.2.x.x Runtime Semantics: IsTemplateObject ( *value* )](#2212xx-runtime-semantics-istemplateobject--value-)
-* [test262 draft](#test262-draft)
+* [Tests](#tests)
 
 
 ## Use cases & Prior Discussions
