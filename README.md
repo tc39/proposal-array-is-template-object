@@ -26,7 +26,7 @@ result = sensitiveOperation`trusted0 ${ untrusted } trusted1`
 // May come from outside                ^^^^^^^^^
 ```
 
-This proposal would provide enough context to warn or erroring out when this
+This proposal would provide enough context to warn or error out when this
 is not the case.
 
 ```js
@@ -34,7 +34,8 @@ function (trustedStrings, ...untrustedArguments) {
   if (!Array.isTemplateObject(trustedStrings)) {
     // Do not trust trustedStrings
   }
-  // Proceed knowing that trustedStrings
+  // Proceed knowing that trustedStrings come from
+  // the JavaScript module's authors.
 }
 ```
 
