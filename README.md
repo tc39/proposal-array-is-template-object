@@ -1,4 +1,6 @@
-# Array.isTemplateObject explainer (stage [0](https://tc39.github.io/process-document/))
+# Array.isTemplateObject explainer (stage [2](https://tc39.github.io/process-document/))
+
+Reviewers: [@erights](https://github.com/erights), [@jridgewell](https://github.com/jridgewell)
 
 Provides a way for template tag functions to tell whether they were
 called with a template string bundle.
