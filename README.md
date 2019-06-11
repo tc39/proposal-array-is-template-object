@@ -1,4 +1,4 @@
-# Array.isTemplateObject explainer (stage [2](https://tc39.github.io/process-document/))
+# Array.isTemplateObject explainer (stage [2](https://tc39.es/process-document/))
 
 Reviewers: [@erights](https://github.com/erights), [@jridgewell](https://github.com/jridgewell)
 
@@ -63,12 +63,12 @@ See the linked issue as to why that is untenable.  Especially the discussion aro
 
 ## Possible Spec Language
 
-You can browse the [ecmarkup output](https://mikesamuel.github.io/proposal-array-is-template-object/)
-or browse the [source](https://github.com/mikesamuel/proposal-array-is-template-object/blob/master/spec.emu).
+You can browse the [ecmarkup output](https://tc39.es/proposal-array-is-template-object/)
+or browse the [source](https://github.com/tc39/proposal-array-is-template-object/blob/master/spec.emu).
 
 ## Tests
 
 The test262
-[draft tests](https://github.com/mikesamuel/proposal-array-is-template-object/blob/master/test262/test/built-ins/Array/is-template-object.js)
+[draft tests](https://github.com/tc39/proposal-array-is-template-object/blob/master/test262/test/built-ins/Array/is-template-object.js)
 which would be added under
 [test/built-ins/Array](https://github.com/tc39/test262/tree/master/test/built-ins/Array)

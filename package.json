@@ -6,26 +6,22 @@
   "main": "index.js",
   "scripts": {
     "build": "ecmarkup spec.emu index.html",
-    "test": "mocha"
+    "test": "mocha",
+    "precommit": "npm run build && npm run test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mikesamuel/proposal-array-is-template-object.git"
+    "url": "git+https://github.com/tc39/proposal-array-is-template-object.git"
   },
   "author": "Mike Samuel",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mikesamuel/proposal-array-is-template-object/issues"
+    "url": "https://github.com/tc39/proposal-array-is-template-object/issues"
   },
-  "homepage": "https://github.com/mikesamuel/proposal-array-is-template-object#readme",
+  "homepage": "https://github.com/tc39/proposal-array-is-template-object#readme",
   "devDependencies": {
     "chai": "^4.2.0",
     "ecmarkup": "^3.16.0",
-    "mocha": "^6.0.2",
-    "pre-commit": "^1.2.2"
-  },
-  "pre-commit": [
-    "build",
-    "test"
-  ]
+    "mocha": "^6.1.4"
+  }
 }
