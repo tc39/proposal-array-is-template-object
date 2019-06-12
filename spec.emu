@@ -9,37 +9,74 @@ stage: 0
 contributors: Mike Samuel
 </pre>
 
+<h2>Changes to GetTemplateObject</h2>
+
+<p>To enable the new API, this proposal modifies GetTemplateObject to add an internal slot to each
+template object it creates.</p>
+
+<emu-clause id="sec-gettemplateobject" aoid="GetTemplateObject">
+  <h1>Runtime Semantics: GetTemplateObject ( _templateLiteral_ )</h1>
+  <p>The abstract operation GetTemplateObject is called with a Parse Node, _templateLiteral_, as an argument. It performs the following steps:</p>
+  <emu-alg>
+    1. Let _rawStrings_ be TemplateStrings of _templateLiteral_ with argument *true*.
+    1. Let _realm_ be the current Realm Record.
+    1. Let _templateRegistry_ be _realm_.[[TemplateMap]].
+    1. For each element _e_ of _templateRegistry_, do
+      1. If _e_.[[Site]] is the same Parse Node as _templateLiteral_, then
+        1. Return _e_.[[Array]].
+    1. Let _cookedStrings_ be TemplateStrings of _templateLiteral_ with argument *false*.
+    1. Let _count_ be the number of elements in the List _cookedStrings_.
+    1. Assert: _count_ &le; 2<sup>32</sup> - 1.
+    1. Let _template_ be ! ArrayCreate(_count_).
+    1. <ins>Set _template_.[[TemplateObject]] to *true*.</ins>
+    1. Let _rawObj_ be ! ArrayCreate(_count_).
+    1. Let _index_ be 0.
+    1. ...
+</emu-clause>
+
+
+<h2>New APIs</h2>
+
 <p>This adds a builtin static method to Array to allow distinguishing template string literal objects</p>
 
 <p>Added under
-  <a href="https://www.ecma-international.org/ecma-262/#sec-properties-of-the-array-constructor"
+  <a href="https://tc39.es/ecma262/#sec-properties-of-the-array-constructor"
      >Properties of the Array Constructor</a>:
 </p>
 
 <emu-clause id="sec-Array.isTemplateObject">
-  <h1>Array.isTemplateObject ( _value_ )</h1>
+  <h1><ins>Array.isTemplateObject ( _value_ )</ins></h1>
 
-  <p>When the `isTemplateObject` method is called with argument _value_ the following steps are taken:</p>
+  <p><ins>When the `isTemplateObject` method is called with argument _value_ the following steps are taken:</ins></p>
 
   <emu-alg>
-    1. Let _result_ be IsTemplateObject(_value_).
-    1. Return _result_.
+    1. <ins>Let _result_ be IsTemplateObject(_value_).</ins>
+    1. <ins>Return _result_.</ins>
   </emu-alg>
-  <p>The value of the `name` property of this function is `"isTemplateObject"`.</p>
-</emu-clause>
+  <p><ins>The value of the `name` property of this function is `"isTemplateObject"`.</ins></p>
 
-<emu-clause id="sec-IsTemplateObject">
-  <h1>Runtime Semantics: IsTemplateObject ( _value_ )</h1>
+  <emu-clause id="sec-IsTemplateObject">
+    <h1><ins>Runtime Semantics: IsTemplateObject ( _value_ )</ins></h1>
 
-  <p>The abstract operation IsTemplateObject is called with a value, _value_, as an argument.
-    It performs the following steps:</p>
+    <p><ins>The abstract operation IsTemplateObject is called with a value, _value_, as an argument.
+      It performs the following steps:</ins></p>
 
-  <emu-alg aoid="IsTemplateObject">
-    1. Let _realm_ be the current Realm Record.
-    1. Let _templateRegistry_ be _realm_.[[TemplateMap]].
-    1. For each element _e_ of _templateRegistry_, do
-      1. If _e_.[[Array]] is the same value as _values_, then
-        1. Return *true*.
-    1. Return *false*.
-  </emu-alg>
+    <emu-alg aoid="IsTemplateObject">
+      1. <ins>If Type(_value_) is Object then</ins>
+        1. <ins>If _value_ has a [[TemplateObject]] field then</ins>
+          1. <ins>Let _result_ be _value_.[[TemplateObject]]</ins>
+          1. <ins>Assert Type(_result) is Boolean.</ins>
+          1. <ins>Return _result_.</ins>
+      1. <ins>Return *false*.</ins>
+    </emu-alg>
+
+    <emu-note>
+      <p><ins>IsTemplateObject is realm-agnostic.  Since template objects are frozen before
+        escaping GetTemplateObject, testing (IsTemplateObject(_x_) and _x_.[[Prototype]]
+        is the _realm_'s %ArrayPrototype%) is sufficient to determine whether an _x_ is
+        a template object in a particular _realm_.</ins></p>
+      <p><ins>In user code, `Array.isTemplateObject(x) && x instanceof Array` is an equivalent
+        test, assuming no changes to builtins.</ins></p>
+    </emu-note>
+  </emu-clause>
 </emu-clause>

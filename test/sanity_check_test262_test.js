@@ -9,9 +9,7 @@ const { expect } = require('chai');
 describe('README.md', () => {
   describe('test262', () => {
     beforeEach(() => {
-      Array.isTemplateObject = function isTemplateObject(value) {
-        return value instanceof Array;
-      };
+      Array.isTemplateObject = require('is-template-object').implementation;
     });
     afterEach(() => {
       delete Array.isTemplateObject;
@@ -45,7 +43,7 @@ describe('README.md', () => {
       expect(test262stubErrorList)
         .to.deep.equal([
           '#2: Array.isTemplateObject producing spurious negative results:'
-          + ' [ \"x\" ],proxy,forgery,argument not poked'
+          + ' proxy,forgery,argument not poked'
         ]);
     });
   });

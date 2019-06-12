@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="./spec.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
 <script src="./spec.js"></script>
-<title>Array.isTemplateObject</title><script type="application/json" id="menu-search-biblio">[{"type":"clause","id":"sec-Array.isTemplateObject","aoid":null,"title":"Array.isTemplateObject ( value )","titleHTML":"Array.isTemplateObject ( <var>value</var> )","number":"1","namespace":"<no location>","location":"","referencingIds":[],"key":"Array.isTemplateObject ( value )"},{"type":"clause","id":"sec-IsTemplateObject","aoid":null,"title":"Runtime Semantics: IsTemplateObject ( value )","titleHTML":"Runtime Semantics: IsTemplateObject ( <var>value</var> )","number":"2","namespace":"<no location>","location":"","referencingIds":[],"key":"Runtime Semantics: IsTemplateObject ( value )"},{"type":"clause","id":"sec-copyright-and-software-license","aoid":null,"title":"Copyright & Software License","titleHTML":"Copyright &amp; Software License","number":"A","namespace":"<no location>","location":"","referencingIds":[],"key":"Copyright & Software License"}]</script><script>"use strict";
+<title>Array.isTemplateObject</title><script type="application/json" id="menu-search-biblio">[{"type":"op","aoid":"GetTemplateObject","refId":"sec-gettemplateobject","location":"","referencingIds":[],"key":"GetTemplateObject"},{"type":"clause","id":"sec-gettemplateobject","aoid":"GetTemplateObject","title":"Runtime Semantics: GetTemplateObject ( templateLiteral )","titleHTML":"Runtime Semantics: GetTemplateObject ( <var>templateLiteral</var> )","number":"1","namespace":"<no location>","location":"","referencingIds":["_ref_0","_ref_5"],"key":"Runtime Semantics: GetTemplateObject ( templateLiteral )"},{"type":"clause","id":"sec-IsTemplateObject","aoid":null,"title":"Runtime Semantics: IsTemplateObject ( value )","titleHTML":"<ins>Runtime Semantics: IsTemplateObject ( <var>value</var> )</ins>","number":"2.1","namespace":"<no location>","location":"","referencingIds":[],"key":"Runtime Semantics: IsTemplateObject ( value )"},{"type":"clause","id":"sec-Array.isTemplateObject","aoid":null,"title":"Array.isTemplateObject ( value )","titleHTML":"<ins>Array.isTemplateObject ( <var>value</var> )</ins>","number":"2","namespace":"<no location>","location":"","referencingIds":[],"key":"Array.isTemplateObject ( value )"},{"type":"clause","id":"sec-copyright-and-software-license","aoid":null,"title":"Copyright & Software License","titleHTML":"Copyright &amp; Software License","number":"A","namespace":"<no location>","location":"","referencingIds":[],"key":"Copyright & Software License"}]</script><script>"use strict";
 
 function Search(menu) {
   this.menu = menu;
@@ -1805,34 +1805,56 @@ li.menu-search-result-term:before {
     display: none; 
   }
 }
-</style></head><body><div id="menu-toggle">☰</div><div id="menu-spacer"></div><div id="menu"><div id="menu-search"><input type="text" id="menu-search-box" placeholder="Search..."><div id="menu-search-results" class="inactive"></div></div><div id="menu-pins"><div class="menu-pane-header">Pins</div><ul id="menu-pins-list"></ul></div><div class="menu-pane-header">Table of Contents</div><div id="menu-toc"><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-Array.isTemplateObject" title="Array.isTemplateObject ( value )"><span class="secnum">1</span> Array.isTemplateObject ( <var>value</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-IsTemplateObject" title="Runtime Semantics: IsTemplateObject ( value )"><span class="secnum">2</span> RS: IsTemplateObject ( <var>value</var> )</a></li><li><span class="item-toggle-none"></span><a href="#sec-copyright-and-software-license" title="Copyright &amp; Software License"><span class="secnum">A</span> Copyright &amp; Software License</a></li></ol></div></div><div id="spec-container"><h1 class="version first">Stage 0 Draft / June 11, 2019</h1><h1 class="title">Array.isTemplateObject</h1>
+</style></head><body><div id="menu-toggle">☰</div><div id="menu-spacer"></div><div id="menu"><div id="menu-search"><input type="text" id="menu-search-box" placeholder="Search..."><div id="menu-search-results" class="inactive"></div></div><div id="menu-pins"><div class="menu-pane-header">Pins</div><ul id="menu-pins-list"></ul></div><div class="menu-pane-header">Table of Contents</div><div id="menu-toc"><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-gettemplateobject" title="Runtime Semantics: GetTemplateObject ( templateLiteral )"><span class="secnum">1</span> RS: GetTemplateObject ( <var>templateLiteral</var> )</a></li><li><span class="item-toggle">◢</span><a href="#sec-Array.isTemplateObject" title="Array.isTemplateObject ( value )"><span class="secnum">2</span> <ins>Array.isTemplateObject ( <var>value</var> )</ins></a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-IsTemplateObject" title="Runtime Semantics: IsTemplateObject ( value )"><span class="secnum">2.1</span> <ins>RS: IsTemplateObject ( <var>value</var> )</ins></a></li></ol></li><li><span class="item-toggle-none"></span><a href="#sec-copyright-and-software-license" title="Copyright &amp; Software License"><span class="secnum">A</span> Copyright &amp; Software License</a></li></ol></div></div><div id="spec-container"><h1 class="version first">Stage 0 Draft / June 12, 2019</h1><h1 class="title">Array.isTemplateObject</h1>
+
+<h2>Changes to GetTemplateObject</h2>
+
+<p>To enable the new API, this proposal modifies <emu-xref aoid="GetTemplateObject" id="_ref_0"><a href="#sec-gettemplateobject">GetTemplateObject</a></emu-xref> to add an internal slot to each
+template object it creates.</p>
+
+<emu-clause id="sec-gettemplateobject" aoid="GetTemplateObject">
+  <h1><span class="secnum">1</span>Runtime Semantics: GetTemplateObject ( <var>templateLiteral</var> )</h1>
+  <p>The abstract operation GetTemplateObject is called with a Parse Node, <var>templateLiteral</var>, as an argument. It performs the following steps:</p>
+  <emu-alg><ol><li>Let <var>rawStrings</var> be TemplateStrings of <var>templateLiteral</var> with argument <emu-val>true</emu-val>.</li><li>Let <var>realm</var> be <emu-xref href="#current-realm"><a href="https://tc39.github.io/ecma262/#current-realm">the current Realm Record</a></emu-xref>.</li><li>Let <var>templateRegistry</var> be <var>realm</var>.[[TemplateMap]].</li><li>For each element <var>e</var> of <var>templateRegistry</var>, do<ol><li>If <var>e</var>.[[Site]] is the same Parse Node as <var>templateLiteral</var>, then<ol><li>Return <var>e</var>.[[Array]].</li></ol></li></ol></li><li>Let <var>cookedStrings</var> be TemplateStrings of <var>templateLiteral</var> with argument <emu-val>false</emu-val>.</li><li>Let <var>count</var> be the number of elements in the <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.github.io/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> <var>cookedStrings</var>.</li><li>Assert: <var>count</var> ≤ 2<sup>32</sup> - 1.</li><li>Let <var>template</var> be !&nbsp;<emu-xref aoid="ArrayCreate" id="_ref_1"><a href="https://tc39.github.io/ecma262/#sec-arraycreate">ArrayCreate</a></emu-xref>(<var>count</var>).</li><li><ins>Set <var>template</var>.[[TemplateObject]] to <emu-val>true</emu-val>.</ins></li><li>Let <var>rawObj</var> be !&nbsp;<emu-xref aoid="ArrayCreate" id="_ref_2"><a href="https://tc39.github.io/ecma262/#sec-arraycreate">ArrayCreate</a></emu-xref>(<var>count</var>).</li><li>Let <var>index</var> be 0.</li><li>...</li></ol></emu-alg></emu-clause>
+
+
+<h2>New APIs</h2>
 
 <p>This adds a builtin static method to Array to allow distinguishing template string literal objects</p>
 
 <p>Added under
   
-  <a href="https://www.ecma-international.org/ecma-262/#sec-properties-of-the-array-constructor">Properties of the Array Constructor</a>:
+  <a href="https://tc39.es/ecma262/#sec-properties-of-the-array-constructor">Properties of the Array Constructor</a>:
 
 </p>
 
 <emu-clause id="sec-Array.isTemplateObject">
-  <h1><span class="secnum">1</span>Array.isTemplateObject ( <var>value</var> )</h1>
+  <h1><span class="secnum">2</span><ins>Array.isTemplateObject ( <var>value</var> )</ins></h1>
 
-  <p>When the <code>isTemplateObject</code> method is called with argument <var>value</var> the following steps are taken:</p>
+  <p><ins>When the <code>isTemplateObject</code> method is called with argument <var>value</var> the following steps are taken:</ins></p>
 
-  <emu-alg><ol><li>Let <var>result</var> be IsTemplateObject(<var>value</var>).</li><li>Return <var>result</var>.
+  <emu-alg><ol><li><ins>Let <var>result</var> be IsTemplateObject(<var>value</var>).</ins></li><li><ins>Return <var>result</var>.</ins>
   </li></ol></emu-alg>
-  <p>The value of the <code>name</code> property of this function is <code>"isTemplateObject"</code>.</p>
-</emu-clause>
+  <p><ins>The value of the <code>name</code> property of this function is <code>"isTemplateObject"</code>.</ins></p>
 
-<emu-clause id="sec-IsTemplateObject">
-  <h1><span class="secnum">2</span>Runtime Semantics: IsTemplateObject ( <var>value</var> )</h1>
+  <emu-clause id="sec-IsTemplateObject">
+    <h1><span class="secnum">2.1</span><ins>Runtime Semantics: IsTemplateObject ( <var>value</var> )</ins></h1>
 
-  <p>The abstract operation IsTemplateObject is called with a value, <var>value</var>, as an argument.
-    It performs the following steps:</p>
+    <p><ins>The abstract operation IsTemplateObject is called with a value, <var>value</var>, as an argument.
+      It performs the following steps:</ins></p>
 
-  <emu-alg aoid="IsTemplateObject"><ol><li>Let <var>realm</var> be <emu-xref href="#current-realm"><a href="https://tc39.github.io/ecma262/#current-realm">the current Realm Record</a></emu-xref>.</li><li>Let <var>templateRegistry</var> be <var>realm</var>.[[TemplateMap]].</li><li>For each element <var>e</var> of <var>templateRegistry</var>, do<ol><li>If <var>e</var>.[[Array]] is the same value as <var>values</var>, then<ol><li>Return <emu-val>true</emu-val>.</li></ol></li></ol></li><li>Return <emu-val>false</emu-val>.
-  </li></ol></emu-alg>
+    <emu-alg aoid="IsTemplateObject"><ol><li><ins>If <emu-xref aoid="Type" id="_ref_3"><a href="https://tc39.github.io/ecma262/#sec-ecmascript-data-types-and-values">Type</a></emu-xref>(<var>value</var>) is Object then</ins><ol><li><ins>If <var>value</var> has a [[TemplateObject]] field then</ins><ol><li><ins>Let <var>result</var> be <var>value</var>.[[TemplateObject]]</ins></li><li><ins>Assert <emu-xref aoid="Type" id="_ref_4"><a href="https://tc39.github.io/ecma262/#sec-ecmascript-data-types-and-values">Type</a></emu-xref>(_result) is Boolean.</ins></li><li><ins>Return <var>result</var>.</ins></li></ol></li></ol></li><li><ins>Return <emu-val>false</emu-val>.</ins>
+    </li></ol></emu-alg>
+
+    <emu-note><span class="note">Note</span><div class="note-contents">
+      <p><ins>IsTemplateObject is <emu-xref href="#realm"><a href="https://tc39.github.io/ecma262/#realm">realm</a></emu-xref>-agnostic.  Since template objects are frozen before
+        escaping <emu-xref aoid="GetTemplateObject" id="_ref_5"><a href="#sec-gettemplateobject">GetTemplateObject</a></emu-xref>, testing (IsTemplateObject(<var>x</var>) and <var>x</var>.[[Prototype]]
+        is the <var>realm</var>'s <emu-xref href="#sec-properties-of-the-array-prototype-object"><a href="https://tc39.github.io/ecma262/#sec-properties-of-the-array-prototype-object">%ArrayPrototype%</a></emu-xref>) is sufficient to determine whether an <var>x</var> is
+        a template object in a particular <var>realm</var>.</ins></p>
+      <p><ins>In user code, <code>Array.isTemplateObject(x) &amp;&amp; x instanceof Array</code> is an equivalent
+        test, assuming no changes to builtins.</ins></p>
+    </div></emu-note>
+  </emu-clause>
 </emu-clause><emu-annex id="sec-copyright-and-software-license">
       <h1><span class="secnum">A</span>Copyright &amp; Software License</h1>
       

@@ -41,6 +41,11 @@ var posTestCases = [
     'called with null this',
     () => Reflect.apply(Array.isTemplateObject, null, [ escapedTemplateObject ]),
   ],
+  // IsTemplateObject is realm-agnostic
+  [
+    'cross-realm template objects',
+    () => Array.isTemplateObject(foreignTemplateObject),
+  ],
 ];
 
 var falsePositives = [];
@@ -125,12 +130,15 @@ var negTestCases = [
       return Array.isTemplateObject(arg) || poked;
     }
   ],
-  // Since a motivating use case is to identify strings that originated within
-  // the current origin, it shouldn't return true for a template object that
-  // originated in a different realm.
+  // Since a motivating use case is to identify strings that
+  // originated within the current origin, the idiom from the spec note
+  // shouldn't return true for a template object that originated in a
+  // different realm.
   [
-    'cross-realm template objects',
-    () => Array.isTemplateObject(foreignTemplateObject),
+    'same-realm template object idiom',
+    () =>
+      Array.isTemplateObject(foreignTemplateObject)
+      && foreignTemplateObject instanceof Array,
   ],
 ];
 
