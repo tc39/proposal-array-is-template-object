@@ -12,6 +12,7 @@ called with a template string bundle.
 * [What this is not](#what-this-is-not)
 * [Possible Spec Language](#possible-spec-language)
 * [Tests](#tests)
+* [Related Work](#related-work)
 
 
 ## Use cases & Prior Discussions
@@ -33,11 +34,14 @@ is not the case.
 
 ```js
 function (trustedStrings, ...untrustedArguments) {
-  if (!Array.isTemplateObject(trustedStrings)) {
+  if (Array.isTemplateObject(trustedStrings)
+      // instanceof provides a same-Realm guarantee for early frozen objects.
+      && trustedStrings instanceof Array) {
+    // Proceed knowing that trustedStrings come from
+    // the JavaScript module's authors.
+  } else {
     // Do not trust trustedStrings
   }
-  // Proceed knowing that trustedStrings come from
-  // the JavaScript module's authors.
 }
 ```
 
@@ -72,3 +76,8 @@ The test262
 [draft tests](https://github.com/tc39/proposal-array-is-template-object/blob/master/test262/test/built-ins/Array/is-template-object.js)
 which would be added under
 [test/built-ins/Array](https://github.com/tc39/test262/tree/master/test/built-ins/Array)
+
+## Related Work
+
+If the [literals proposal](https://github.com/mikewest/tc39-proposal-literals) were to advance,
+this proposal would be unnecessary since they both cover the use cases from this document.
