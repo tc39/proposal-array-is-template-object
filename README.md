@@ -11,6 +11,7 @@ called with a template string bundle.
   + [Distinguishing strings from a trusted developer from strings that may be attacker controlled](#distinguishing-strings-from-a-trusted-developer-from-strings-that-may-be-attacker-controlled)
 * [What this is not](#what-this-is-not)
 * [Possible Spec Language](#possible-spec-language)
+* [Polyfill](#polyfill)
 * [Tests](#tests)
 * [Related Work](#related-work)
 
@@ -69,6 +70,10 @@ See the linked issue as to why that is untenable.  Especially the discussion aro
 
 You can browse the [ecmarkup output](https://tc39.es/proposal-array-is-template-object/)
 or browse the [source](https://github.com/tc39/proposal-array-is-template-object/blob/master/spec.emu).
+
+## Polyfill
+
+There is an es-shim API compatible polyfill available at [![npm](https://img.shields.io/npm/v/is-template-object.svg)](https://www.npmjs.com/package/is-template-object).
 
 ## Tests
 
