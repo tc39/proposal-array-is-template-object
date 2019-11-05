@@ -73,7 +73,9 @@ or browse the [source](https://github.com/tc39/proposal-array-is-template-object
 
 ## Polyfill
 
-There is an es-shim API compatible polyfill available at [![npm](https://img.shields.io/npm/v/is-template-object.svg)](https://www.npmjs.com/package/is-template-object).
+An es-shim API compatible polyfill available at [![npm](https://img.shields.io/npm/v/is-template-object.svg)](https://www.npmjs.com/package/is-template-object).
+
+A polyfill is available in the [core-js](https://github.com/zloirock/core-js) library. You can find it in the [ECMAScript proposals section](https://github.com/zloirock/core-js#arrayistemplateobject).
 
 ## Tests
 
