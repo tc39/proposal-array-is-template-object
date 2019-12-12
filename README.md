@@ -70,7 +70,7 @@ callers since it's in a local scope.  This assumes that TT's [first-come-first-s
 provisioning, letting only authorized callers access the sensitive
 operation.
 
-``js
+```js
 const { Array, TypeError } = globalThis;
 const { createPolicy } = trustedTypes;
 const { isTemplateObject } = Array;
