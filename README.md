@@ -78,7 +78,7 @@ const { error: consoleErr } = console;
 
 /**
  * A tag function that produces *TrustedHTML* or null if the
- * policy name "trustedHTMTagFunction" is not available.
+ * policy name "trustedHTMLTagFunction" is not available.
  */
 export trustedHTML = (() => {
   // We use TrustedType's first-come-first-serve policy name restrictions
