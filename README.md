@@ -129,7 +129,7 @@ Without `isArrayTemplate`, this can be bypassed:
 ```js
 // A naive, but non-malicious function.
 function f(x) {
-  // People trust trustedHTMTagFunction.
+  // People trust trustedHTMLTagFunction.
   // Our HTML is trustworthy because <bad argument> so we'll just
   // piggyback off that by using a value that looks like a template object.
   // What could possibly go wrong?
