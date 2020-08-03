@@ -1,8 +1,12 @@
-# Array.isTemplateObject explainer (stage [2](https://tc39.es/process-document/))
+# ECMAScript proposal: `Array.isTemplateObject`
 
-Reviewers: [@erights](https://github.com/erights), [@jridgewell](https://github.com/jridgewell)
+Champions: [@erights](https://github.com/erights), [@jridgewell](https://github.com/jridgewell)
 
-Provides a way for template tag functions to tell whether they were
+Status: [Stage 2](https://tc39.es/process-document/)
+
+## Synopsis
+
+`Array.isTemplateObject` provides a way for template tag functions to tell whether they were
 called with a template string bundle.
 
 **Table of Contents**
@@ -16,7 +20,7 @@ called with a template string bundle.
 * [Related Work](#related-work)
 
 
-## Use cases & Prior Discussions
+## Motivation & Prior Discussions
 
 ### Distinguishing strings from a trusted developer from strings that may be attacker controlled
 
@@ -60,7 +64,7 @@ console.log(Array.isTemplateObject(x));
 Many other security assumptions break if an attacker can execute arbitrary code,
 so this check is still useful.
 
-## What this is not
+## What's not the goal of the proposal
 
 This is not an attempt to determine whether the current function was called as a template literal.
 See the linked issue as to why that is untenable.  Especially the discussion around threat models,
@@ -68,12 +72,12 @@ See the linked issue as to why that is untenable.  Especially the discussion aro
 
 ## Possible Spec Language
 
-You can browse the [ecmarkup output](https://tc39.es/proposal-array-is-template-object/)
-or browse the [source](https://github.com/tc39/proposal-array-is-template-object/blob/master/spec.emu).
+A possible _spec language_ can be found as an [ecmarkup output](https://tc39.es/proposal-array-is-template-object/) or
+as [source code](https://github.com/tc39/proposal-array-is-template-object/blob/master/spec.emu).
 
 ## Polyfill
 
-An es-shim API compatible polyfill available at [![npm](https://img.shields.io/npm/v/is-template-object.svg)](https://www.npmjs.com/package/is-template-object).
+An `es-shim` API compatible polyfill is currently available at [![npm](https://img.shields.io/npm/v/is-template-object.svg)](https://www.npmjs.com/package/is-template-object).
 
 A polyfill is available in the [core-js](https://github.com/zloirock/core-js) library. You can find it in the [ECMAScript proposals section](https://github.com/zloirock/core-js#arrayistemplateobject).
 
@@ -81,8 +85,8 @@ A polyfill is available in the [core-js](https://github.com/zloirock/core-js) li
 
 The test262
 [draft tests](https://github.com/tc39/proposal-array-is-template-object/blob/master/test262/test/built-ins/Array/is-template-object.js)
-which would be added under
-[test/built-ins/Array](https://github.com/tc39/test262/tree/master/test/built-ins/Array)
+ would be added under
+[test/built-ins/Array](https://github.com/tc39/test262/tree/master/test/built-ins/Array).
 
 ## Related Work
 
