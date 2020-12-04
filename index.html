@@ -3,20 +3,25 @@
 <link rel="stylesheet" href="./spec.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
 <script src="./spec.js"></script>
-<title>Array.isTemplateObject</title><script type="application/json" id="menu-search-biblio">[{"type":"op","aoid":"GetTemplateObject","refId":"sec-gettemplateobject","location":"","referencingIds":[],"key":"GetTemplateObject"},{"type":"clause","id":"sec-gettemplateobject","aoid":"GetTemplateObject","title":"Runtime Semantics: GetTemplateObject ( templateLiteral )","titleHTML":"Runtime Semantics: GetTemplateObject ( <var>templateLiteral</var> )","number":"1","namespace":"<no location>","location":"","referencingIds":["_ref_0","_ref_4"],"key":"Runtime Semantics: GetTemplateObject ( templateLiteral )"},{"type":"clause","id":"sec-IsTemplateObject","aoid":null,"title":"Runtime Semantics: IsTemplateObject ( value )","titleHTML":"<ins>Runtime Semantics: IsTemplateObject ( <var>value</var> )</ins>","number":"2.1","namespace":"<no location>","location":"","referencingIds":[],"key":"Runtime Semantics: IsTemplateObject ( value )"},{"type":"clause","id":"sec-Array.isTemplateObject","aoid":null,"title":"Array.isTemplateObject ( value )","titleHTML":"<ins>Array.isTemplateObject ( <var>value</var> )</ins>","number":"2","namespace":"<no location>","location":"","referencingIds":[],"key":"Array.isTemplateObject ( value )"},{"type":"clause","id":"sec-copyright-and-software-license","aoid":null,"title":"Copyright & Software License","titleHTML":"Copyright &amp; Software License","number":"A","namespace":"<no location>","location":"","referencingIds":[],"key":"Copyright & Software License"}]</script><script>"use strict";
+<title>Array.isTemplateObject</title><script type="application/json" id="menu-search-biblio">[{"type":"op","aoid":"GetTemplateObject","refId":"sec-gettemplateobject","location":"","referencingIds":[],"key":"GetTemplateObject"},{"type":"clause","id":"sec-gettemplateobject","aoid":"GetTemplateObject","title":"Runtime Semantics: GetTemplateObject ( templateLiteral )","titleHTML":"Runtime Semantics: GetTemplateObject ( <var>templateLiteral</var> )","number":"1","namespace":"<no location>","location":"","referencingIds":["_ref_0","_ref_4"],"key":"Runtime Semantics: GetTemplateObject ( templateLiteral )"},{"type":"clause","id":"sec-IsTemplateObject","aoid":null,"title":"Runtime Semantics: IsTemplateObject ( value )","titleHTML":"<ins>Runtime Semantics: IsTemplateObject ( <var>value</var> )</ins>","number":"2.1","namespace":"<no location>","location":"","referencingIds":[],"key":"Runtime Semantics: IsTemplateObject ( value )"},{"type":"clause","id":"sec-Array.isTemplateObject","aoid":null,"title":"Array.isTemplateObject ( value )","titleHTML":"<ins>Array.isTemplateObject ( <var>value</var> )</ins>","number":"2","namespace":"<no location>","location":"","referencingIds":[],"key":"Array.isTemplateObject ( value )"}]</script><script>"use strict";
 
 function Search(menu) {
   this.menu = menu;
   this.$search = document.getElementById('menu-search');
   this.$searchBox = document.getElementById('menu-search-box');
   this.$searchResults = document.getElementById('menu-search-results');
-  
+
   this.loadBiblio();
-  
+
   document.addEventListener('keydown', this.documentKeydown.bind(this));
-  
+
   this.$searchBox.addEventListener('keydown', debounce(this.searchBoxKeydown.bind(this), { stopPropagation: true }));
   this.$searchBox.addEventListener('keyup', debounce(this.searchBoxKeyup.bind(this), { stopPropagation: true }));
+
+  // Perform an initial search if the box is not empty.
+  if (this.$searchBox.value) {
+    this.search(this.$searchBox.value);
+  }
 }
 
 Search.prototype.loadBiblio = function () {
@@ -56,7 +61,7 @@ Search.prototype.searchBoxKeyup = function (e) {
   if (e.keyCode === 13 || e.keyCode === 9) {
     return;
   }
-  
+
   this.search(e.target.value);
 }
 
@@ -79,25 +84,23 @@ Search.prototype.triggerSearch = function (e) {
 // prefer shorter matches.
 function relevance(result, searchString) {
   var relevance = 0;
-  
+
   relevance = Math.max(0, 8 - result.match.chunks) << 7;
-  
+
   if (result.match.caseMatch) {
     relevance *= 2;
   }
-  
+
   if (result.match.prefix) {
     relevance += 2048
   }
-  
+
   relevance += Math.max(0, 255 - result.entry.key.length);
-  
+
   return relevance;
 }
 
 Search.prototype.search = function (searchString) {
-  var s = Date.now();
-
   if (searchString === '') {
     this.displayResults([]);
     this.hideSearch();
@@ -105,12 +108,12 @@ Search.prototype.search = function (searchString) {
   } else {
     this.showSearch();
   }
-  
+
   if (searchString.length === 1) {
     this.displayResults([]);
     return;
   }
-    
+
   var results;
 
   if (/^[\d\.]*$/.test(searchString)) {
@@ -121,7 +124,7 @@ Search.prototype.search = function (searchString) {
     });
   } else {
     results = [];
-    
+
     for (var i = 0; i < this.biblio.length; i++) {
       var entry = this.biblio[i];
       if (!entry.key) {
@@ -134,11 +137,11 @@ Search.prototype.search = function (searchString) {
         results.push({ entry: entry, match: match });
       }
     }
-  
+
     results.forEach(function (result) {
       result.relevance = relevance(result, searchString);
     });
-    
+
     results = results.sort(function (a, b) { return b.relevance - a.relevance });
 
   }
@@ -146,7 +149,7 @@ Search.prototype.search = function (searchString) {
   if (results.length > 50) {
     results = results.slice(0, 50);
   }
-  
+
   this.displayResults(results);
 }
 Search.prototype.hideSearch = function () {
@@ -163,7 +166,7 @@ Search.prototype.selectResult = function () {
   if ($first) {
     document.location = $first.getAttribute('href');
   }
-  
+
   this.$searchBox.value = '';
   this.$searchBox.blur();
   this.displayResults([]);
@@ -177,7 +180,7 @@ Search.prototype.selectResult = function () {
 Search.prototype.displayResults = function (results) {
   if (results.length > 0) {
     this.$searchResults.classList.remove('no-results');
-    
+
     var html = '<ul>';
 
     results.forEach(function (result) {
@@ -194,7 +197,7 @@ Search.prototype.displayResults = function (results) {
       } else if (entry.type === 'production') {
         text = entry.key;
         cssClass = 'prod';
-        id = entry.id;  
+        id = entry.id;
       } else if (entry.type === 'op') {
         text = entry.key;
         cssClass = 'op';
@@ -206,7 +209,7 @@ Search.prototype.displayResults = function (results) {
       }
 
       if (text) {
-        html += '<li class=menu-search-result-' + cssClass + '><a href="#' + id + '">' + text + '</a></li>'
+        html += '<li class=menu-search-result-' + cssClass + '><a href="#' + id + '">' + text + '</a></li>';
       }
     });
 
@@ -229,7 +232,7 @@ function Menu() {
   this.$toc = document.querySelector('#menu-toc > ol');
   this.$specContainer = document.getElementById('spec-container');
   this.search = new Search(this);
-  
+
   this._pinnedIds = {}; 
   this.loadPinEntries();
 
@@ -274,9 +277,9 @@ function Menu() {
                     && target.offsetHeight + target.scrollTop >= target.scrollHeight;
 
     if (offBottom) {
-		  e.preventDefault();
-	  }
-  })
+      e.preventDefault();
+    }
+  });
 }
 
 Menu.prototype.documentKeydown = function (e) {
@@ -303,7 +306,7 @@ Menu.prototype.revealInToc = function (path) {
     current[i].classList.remove('revealed');
     current[i].classList.remove('revealed-leaf');
   }
-  
+
   var current = this.$toc;
   var index = 0;
   while (index < path.length) {
@@ -314,7 +317,7 @@ Menu.prototype.revealInToc = function (path) {
         if (index === path.length - 1) {
           children[i].classList.add('revealed-leaf');
           var rect = children[i].getBoundingClientRect();
-          this.$toc.getBoundingClientRect().top
+          // this.$toc.getBoundingClientRect().top;
           var tocRect = this.$toc.getBoundingClientRect();
           if (rect.top + 10 > tocRect.bottom) {
             this.$toc.scrollTop = this.$toc.scrollTop + (rect.top - tocRect.bottom) + (rect.bottom - rect.top);
@@ -325,29 +328,27 @@ Menu.prototype.revealInToc = function (path) {
         current = children[i].querySelector('ol');
         index++;
         break;
-      }      
+      }
     }
-    
+
   }
 }
 
 function findActiveClause(root, path) {
   var clauses = new ClauseWalker(root);
   var $clause;
-  var found = false;
   var path = path || [];
-  
+
   while ($clause = clauses.nextNode()) {
     var rect = $clause.getBoundingClientRect();
-    var $header = $clause.children[0];
+    var $header = $clause.querySelector("h1");
     var marginTop = parseInt(getComputedStyle($header)["margin-top"]);
-    
+
     if ((rect.top - marginTop) <= 0 && rect.bottom > 0) {
-      found = true;
       return findActiveClause($clause, path.concat($clause)) || path;
     }
   }
-  
+
   return path;
 }
 
@@ -372,7 +373,7 @@ function ClauseWalker(root) {
     },
     false
     );
-  
+
   return treeWalker;
 }
 
@@ -455,7 +456,7 @@ Menu.prototype.loadPinEntries = function () {
   } catch (e) {
     return;
   }
-  
+
   var pinsString = window.localStorage.pinEntries;
   if (!pinsString) return;
   var pins = JSON.parse(pinsString);
@@ -486,6 +487,11 @@ function init() {
   var $container = document.getElementById('spec-container');
   $container.addEventListener('mouseover', debounce(function (e) {
     Toolbox.activateIfMouseOver(e);
+  }));
+  document.addEventListener('keydown', debounce(function (e) {
+    if (e.code === "Escape" && Toolbox.active) {
+      Toolbox.deactivate();
+    }
   }));
 }
 
@@ -585,12 +591,11 @@ function fuzzysearch (searchString, haystack, caseInsensitive) {
   var qlen = searchString.length;
   var chunks = 1;
   var finding = false;
-  var prefix = true;
-  
+
   if (qlen > tlen) {
     return false;
   }
-  
+
   if (qlen === tlen) {
     if (searchString === haystack) {
       return { caseMatch: true, chunks: 1, prefix: true };
@@ -600,7 +605,7 @@ function fuzzysearch (searchString, haystack, caseInsensitive) {
       return false;
     }
   }
-  
+
   outer: for (var i = 0, j = 0; i < qlen; i++) {
     var nch = searchString[i];
     while (j < tlen) {
@@ -614,12 +619,12 @@ function fuzzysearch (searchString, haystack, caseInsensitive) {
         finding = false;
       }
     }
-    
-    if (caseInsensitive) { return false }
-    
+
+    if (caseInsensitive) { return false; }
+
     return fuzzysearch(searchString.toLowerCase(), haystack.toLowerCase(), true);
   }
-  
+
   return { caseMatch: !caseInsensitive, chunks: chunks, prefix: j <= qlen };
 }
 
@@ -776,7 +781,6 @@ var referencePane = {
       var target = document.getElementById(id);
       var cid = findParentClauseId(target);
       var clause = menu.search.biblio.byId[cid];
-      var dupCount = 0;
       return { id: id, clause: clause }
     }).sort(function (a, b) {
       return sortByClauseNumber(a.clause, b.clause);
@@ -816,7 +820,7 @@ function sortByClauseNumber(c1, c2) {
     if (i >= c2c.length) {
       return 1;
     }
-    
+
     var c1 = c1c[i];
     var c2 = c2c[i];
     var c1cn = Number(c1);
@@ -976,16 +980,43 @@ emu-const {
 emu-val {
   font-weight: bold;
 }
-emu-alg ol, emu-alg ol ol ol ol {
-    list-style-type: decimal;
+
+/* depth 1 */
+emu-alg ol,
+/* depth 4 */
+emu-alg ol ol ol ol,
+emu-alg ol.nested-thrice,
+emu-alg ol.nested-twice ol,
+emu-alg ol.nested-once ol ol {
+  list-style-type: decimal;
 }
 
-emu-alg ol ol, emu-alg ol ol ol ol ol {
-    list-style-type: lower-alpha;
+/* depth 2 */
+emu-alg ol ol,
+emu-alg ol.nested-once,
+/* depth 5 */
+emu-alg ol ol ol ol ol,
+emu-alg ol.nested-four-times,
+emu-alg ol.nested-thrice ol,
+emu-alg ol.nested-twice ol ol,
+emu-alg ol.nested-once ol ol ol {
+  list-style-type: lower-alpha;
 }
 
-emu-alg ol ol ol, ol ol ol ol ol ol {
-    list-style-type: lower-roman;
+/* depth 3 */
+emu-alg ol ol ol,
+emu-alg ol.nested-twice,
+emu-alg ol.nested-once ol,
+/* depth 6 */
+emu-alg ol ol ol ol ol ol,
+emu-alg ol.nested-lots,
+emu-alg ol.nested-four-times ol,
+emu-alg ol.nested-thrice ol ol,
+emu-alg ol.nested-twice ol ol ol,
+emu-alg ol.nested-once ol ol ol ol,
+/* depth 7+ */
+emu-alg ol.nested-lots ol {
+  list-style-type: lower-roman;
 }
 
 emu-eqn {
@@ -1036,6 +1067,10 @@ emu-note > div.note-contents > p:last-of-type {
   margin-bottom: 0;
 }
 
+emu-table td code {
+  white-space: normal;
+} 
+
 emu-figure {
   display: block;
 }
@@ -1060,6 +1095,10 @@ emu-table figure {
 
 emu-production {
     display: block;
+}
+
+emu-grammar[type="example"] emu-production,
+emu-grammar[type="definition"] emu-production {
     margin-top: 1em;
     margin-bottom: 1em;
     margin-left: 5ex;
@@ -1087,6 +1126,7 @@ emu-gann {
 }
 
 emu-gann emu-t:last-child,
+emu-gann emu-gprose:last-child,
 emu-gann emu-nt:last-child {
     margin-right: 0;
 }
@@ -1141,10 +1181,6 @@ emu-mods {
     font-weight: normal;
 }
 
-emu-production[collapsed] emu-mods {
-  display: none;
-}
-
 emu-params, emu-opt {
   margin-right: 1ex;
   font-family: monospace;
@@ -1161,6 +1197,10 @@ emu-opt {
 emu-gprose {
     font-size: 0.9em;
     font-family: Helvetica, Arial, sans-serif;
+}
+
+emu-production emu-gprose {
+    margin-right: 1ex;
 }
 
 h1.shortname {
@@ -1190,7 +1230,7 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 .secnum {
   text-decoration: none;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 h1 span.title {
@@ -1805,7 +1845,7 @@ li.menu-search-result-term:before {
     display: none; 
   }
 }
-</style></head><body><div id="menu-toggle">☰</div><div id="menu-spacer"></div><div id="menu"><div id="menu-search"><input type="text" id="menu-search-box" placeholder="Search..."><div id="menu-search-results" class="inactive"></div></div><div id="menu-pins"><div class="menu-pane-header">Pins</div><ul id="menu-pins-list"></ul></div><div class="menu-pane-header">Table of Contents</div><div id="menu-toc"><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-gettemplateobject" title="Runtime Semantics: GetTemplateObject ( templateLiteral )"><span class="secnum">1</span> RS: GetTemplateObject ( <var>templateLiteral</var> )</a></li><li><span class="item-toggle">◢</span><a href="#sec-Array.isTemplateObject" title="Array.isTemplateObject ( value )"><span class="secnum">2</span> <ins>Array.isTemplateObject ( <var>value</var> )</ins></a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-IsTemplateObject" title="Runtime Semantics: IsTemplateObject ( value )"><span class="secnum">2.1</span> <ins>RS: IsTemplateObject ( <var>value</var> )</ins></a></li></ol></li><li><span class="item-toggle-none"></span><a href="#sec-copyright-and-software-license" title="Copyright &amp; Software License"><span class="secnum">A</span> Copyright &amp; Software License</a></li></ol></div></div><div id="spec-container"><h1 class="version first">Stage 0 Draft / June 13, 2019</h1><h1 class="title">Array.isTemplateObject</h1>
+</style></head><body><div id="menu-toggle">☰</div><div id="menu-spacer"></div><div id="menu"><div id="menu-search"><input type="text" id="menu-search-box" placeholder="Search..."><div id="menu-search-results" class="inactive"></div></div><div id="menu-pins"><div class="menu-pane-header">Pins</div><ul id="menu-pins-list"></ul></div><div class="menu-pane-header">Table of Contents</div><div id="menu-toc"><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-gettemplateobject" title="Runtime Semantics: GetTemplateObject ( templateLiteral )"><span class="secnum">1</span> RS: GetTemplateObject ( <var>templateLiteral</var> )</a></li><li><span class="item-toggle">◢</span><a href="#sec-Array.isTemplateObject" title="Array.isTemplateObject ( value )"><span class="secnum">2</span> <ins>Array.isTemplateObject ( <var>value</var> )</ins></a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-IsTemplateObject" title="Runtime Semantics: IsTemplateObject ( value )"><span class="secnum">2.1</span> <ins>RS: IsTemplateObject ( <var>value</var> )</ins></a></li></ol></li></ol></div></div><div id="spec-container"><h1 class="version first">Stage 2 Draft / December 4, 2020</h1><h1 class="title">Array.isTemplateObject</h1>
 
 <h2>Changes to GetTemplateObject</h2>
 
@@ -1813,9 +1853,9 @@ li.menu-search-result-term:before {
 template object it creates.</p>
 
 <emu-clause id="sec-gettemplateobject" aoid="GetTemplateObject">
-  <h1><span class="secnum">1</span>Runtime Semantics: GetTemplateObject ( <var>templateLiteral</var> )</h1>
-  <p>The abstract operation GetTemplateObject is called with a Parse Node, <var>templateLiteral</var>, as an argument. It performs the following steps:</p>
-  <emu-alg><ol><li>Let <var>rawStrings</var> be TemplateStrings of <var>templateLiteral</var> with argument <emu-val>true</emu-val>.</li><li>Let <var>realm</var> be <emu-xref href="#current-realm"><a href="https://tc39.github.io/ecma262/#current-realm">the current Realm Record</a></emu-xref>.</li><li>Let <var>templateRegistry</var> be <var>realm</var>.[[TemplateMap]].</li><li>For each element <var>e</var> of <var>templateRegistry</var>, do<ol><li>If <var>e</var>.[[Site]] is the same Parse Node as <var>templateLiteral</var>, then<ol><li>Return <var>e</var>.[[Array]].</li></ol></li></ol></li><li>Let <var>cookedStrings</var> be TemplateStrings of <var>templateLiteral</var> with argument <emu-val>false</emu-val>.</li><li>Let <var>count</var> be the number of elements in the <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.github.io/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> <var>cookedStrings</var>.</li><li>Assert: <var>count</var> ≤ 2<sup>32</sup> - 1.</li><li>Let <var>template</var> be !&nbsp;<emu-xref aoid="ArrayCreate" id="_ref_1"><a href="https://tc39.github.io/ecma262/#sec-arraycreate">ArrayCreate</a></emu-xref>(<var>count</var>).</li><li><ins>Set <var>template</var>.[[TemplateObject]] to <emu-val>true</emu-val>.</ins></li><li>Let <var>rawObj</var> be !&nbsp;<emu-xref aoid="ArrayCreate" id="_ref_2"><a href="https://tc39.github.io/ecma262/#sec-arraycreate">ArrayCreate</a></emu-xref>(<var>count</var>).</li><li>Let <var>index</var> be 0.</li><li>...</li></ol></emu-alg></emu-clause>
+  <h1><span class="secnum">1</span> Runtime Semantics: GetTemplateObject ( <var>templateLiteral</var> )</h1>
+  <p>The abstract operation GetTemplateObject is called with a <emu-xref href="#sec-syntactic-grammar"><a href="https://tc39.es/ecma262/#sec-syntactic-grammar">Parse Node</a></emu-xref>, <var>templateLiteral</var>, as an argument. It performs the following steps:</p>
+  <emu-alg><ol><li>Let <var>realm</var> be <emu-xref href="#current-realm"><a href="https://tc39.es/ecma262/#current-realm">the current Realm Record</a></emu-xref>.</li><li>Let <var>templateRegistry</var> be <var>realm</var>.[[TemplateMap]].</li><li>For each element <var>e</var> of <var>templateRegistry</var>, do<ol><li>If <var>e</var>.[[Site]] is <emu-xref href="#sec-syntactic-grammar"><a href="https://tc39.es/ecma262/#sec-syntactic-grammar">the same Parse Node</a></emu-xref> as <var>templateLiteral</var>, then<ol><li>Return <var>e</var>.[[Array]].</li></ol></li></ol></li><li>Let <var>rawStrings</var> be TemplateStrings of <var>templateLiteral</var> with argument <emu-val>true</emu-val>.</li><li>Let <var>cookedStrings</var> be TemplateStrings of <var>templateLiteral</var> with argument <emu-val>false</emu-val>.</li><li>Let <var>count</var> be the number of elements in the <emu-xref href="#sec-list-and-record-specification-type"><a href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</a></emu-xref> <var>cookedStrings</var>.</li><li><emu-xref href="#assert"><a href="https://tc39.es/ecma262/#assert">Assert</a></emu-xref>: <var>count</var> ≤ 2<sup>32</sup> - 1.</li><li>Let <var>template</var> be !&nbsp;<emu-xref aoid="ArrayCreate" id="_ref_1"><a href="https://tc39.es/ecma262/#sec-arraycreate">ArrayCreate</a></emu-xref>(<var>count</var>).</li><li><ins>Set <var>template</var>.[[TemplateObject]] to <emu-val>true</emu-val>.</ins></li><li>Let <var>rawObj</var> be !&nbsp;<emu-xref aoid="ArrayCreate" id="_ref_2"><a href="https://tc39.es/ecma262/#sec-arraycreate">ArrayCreate</a></emu-xref>(<var>count</var>).</li><li>Let <var>index</var> be 0.</li><li>...</li></ol></emu-alg></emu-clause>
 
 
 <h2>New APIs</h2>
@@ -1823,56 +1863,33 @@ template object it creates.</p>
 <p>This adds a builtin static method to Array to allow distinguishing template string literal objects</p>
 
 <p>Added under
-  
   <a href="https://tc39.es/ecma262/#sec-properties-of-the-array-constructor">Properties of the Array Constructor</a>:
-
 </p>
 
 <emu-clause id="sec-Array.isTemplateObject">
-  <h1><span class="secnum">2</span><ins>Array.isTemplateObject ( <var>value</var> )</ins></h1>
+  <h1><span class="secnum">2</span> <ins>Array.isTemplateObject ( <var>value</var> )</ins></h1>
 
   <p><ins>When the <code>isTemplateObject</code> method is called with argument <var>value</var> the following steps are taken:</ins></p>
 
-  <emu-alg><ol><li><ins>Return !&nbsp;IsTemplateObject(<var>value</var>).</ins>
-  </li></ol></emu-alg>
+  <emu-alg><ol><li><ins>Return !&nbsp;IsTemplateObject(<var>value</var>).</ins></li></ol></emu-alg>
   <p><ins>The value of the <code>name</code> property of this function is <code>"isTemplateObject"</code>.</ins></p>
 
   <emu-clause id="sec-IsTemplateObject">
-    <h1><span class="secnum">2.1</span><ins>Runtime Semantics: IsTemplateObject ( <var>value</var> )</ins></h1>
+    <h1><span class="secnum">2.1</span> <ins>Runtime Semantics: IsTemplateObject ( <var>value</var> )</ins></h1>
 
     <p><ins>The abstract operation IsTemplateObject is called with a value, <var>value</var>, as an argument.
       It performs the following steps:</ins></p>
 
-    <emu-alg aoid="IsTemplateObject"><ol><li><ins>If <emu-xref aoid="Type" id="_ref_3"><a href="https://tc39.github.io/ecma262/#sec-ecmascript-data-types-and-values">Type</a></emu-xref>(<var>value</var>) is Object and <var>value</var>.[[TemplateObject]] is <emu-val>true</emu-val> then</ins><ol><li><ins>return <emu-val>true</emu-val>.</ins></li></ol></li><li><ins>Return <emu-val>false</emu-val>.</ins>
-    </li></ol></emu-alg>
+    <emu-alg aoid="IsTemplateObject"><ol><li><ins>If <emu-xref aoid="Type" id="_ref_3"><a href="https://tc39.es/ecma262/#sec-ecmascript-data-types-and-values">Type</a></emu-xref>(<var>value</var>) is Object and <var>value</var>.[[TemplateObject]] is <emu-val>true</emu-val> then</ins><ol><li><ins>return <emu-val>true</emu-val>.</ins></li></ol></li><li><ins>Return <emu-val>false</emu-val>.</ins></li></ol></emu-alg>
 
     <emu-note><span class="note">Note</span><div class="note-contents">
-      <p><ins>IsTemplateObject is <emu-xref href="#realm"><a href="https://tc39.github.io/ecma262/#realm">realm</a></emu-xref>-agnostic.  Since template objects are frozen before
+      <p><ins>IsTemplateObject is <emu-xref href="#realm"><a href="https://tc39.es/ecma262/#realm">realm</a></emu-xref>-agnostic.  Since template objects are frozen before
         escaping <emu-xref aoid="GetTemplateObject" id="_ref_4"><a href="#sec-gettemplateobject">GetTemplateObject</a></emu-xref>, testing (IsTemplateObject(<var>x</var>) and <var>x</var>.[[Prototype]]
-        is the <var>realm</var>'s <emu-xref href="#sec-properties-of-the-array-prototype-object"><a href="https://tc39.github.io/ecma262/#sec-properties-of-the-array-prototype-object">%ArrayPrototype%</a></emu-xref>) is sufficient to determine whether an <var>x</var> is
+        is the <var>realm</var>'s <emu-xref href="#sec-properties-of-the-array-prototype-object"><a href="https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object">%ArrayPrototype%</a></emu-xref>) is sufficient to determine whether an <var>x</var> is
         a template object in a particular <var>realm</var>.</ins></p>
       <p><ins>In user code, <code>Array.isTemplateObject(x) &amp;&amp; x instanceof Array</code> is an equivalent
         test, assuming no changes to builtins.</ins></p>
     </div></emu-note>
   </emu-clause>
-</emu-clause><emu-annex id="sec-copyright-and-software-license">
-      <h1><span class="secnum">A</span>Copyright &amp; Software License</h1>
-      
-      <h2>Copyright Notice</h2>
-      <p>© 2019 Mike Samuel</p>
-
-      <h2>Software License</h2>
-      <p>All Software contained in this document ("Software") is protected by copyright and is being made available under the "BSD License", included below. This Software may be subject to third party rights (rights from parties other than Ecma International), including patent rights, and no licenses under such third party rights are granted under this license even if the third party concerned is a member of Ecma International. SEE THE ECMA CODE OF CONDUCT IN PATENT MATTERS AVAILABLE AT https://ecma-international.org/memento/codeofconduct.htm FOR INFORMATION REGARDING THE LICENSING OF PATENT CLAIMS THAT ARE REQUIRED TO IMPLEMENT ECMA INTERNATIONAL STANDARDS.</p>
-
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-
-<ol>
-  <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-  <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-  <li>Neither the name of the authors nor Ecma International may be used to endorse or promote products derived from this software without specific prior written permission.</li>
-</ol>
-
-<p>THIS SOFTWARE IS PROVIDED BY THE ECMA INTERNATIONAL "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ECMA INTERNATIONAL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-
-    </emu-annex>
+</emu-clause>
 </div></body>
