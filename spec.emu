@@ -10,10 +10,29 @@ copyright: false
 contributors: Mike Samuel, Krzysztof Kotowicz
 </pre>
 
+<h2>Changes to ArrayCreate</h2>
+
+<p>To enable the new API, this proposal modifies ArrayCreate to add an internal slot to eacharray.</p>
+
+<emu-clause id="sec-arraycreate" aoid="ArrayCreate">
+  <h1>ArrayCreate ( _length_ [ , _proto_ ] )</h1>
+  <p>The abstract operation ArrayCreate takes argument _length_ (a non-negative integer) and optional argument _proto_. It is used to specify the creation of new Array exotic objects. It performs the following steps when called:</p>
+  <emu-alg>
+    1. If _length_ &gt; 2<sup>32</sup> - 1, throw a *RangeError* exception.
+    1. If _proto_ is not present, set _proto_ to %Array.prototype%.
+    1. Let _A_ be ! MakeBasicObject(&laquo; [[Prototype]], [[Extensible]] &raquo;).
+    1. Set _A_.[[Prototype]] to _proto_.
+    1. <ins>Set _A_.[[TemplateObject]] to *false*.</ins>
+    1. Set _A_.[[DefineOwnProperty]] as specified in <emu-xref href="#sec-array-exotic-objects-defineownproperty-p-desc"></emu-xref>.
+    1. Perform ! OrdinaryDefineOwnProperty(_A_, *"length"*, PropertyDescriptor { [[Value]]: 𝔽(_length_), [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
+    1. Return _A_.
+  </emu-alg>
+</emu-clause>
+
+
 <h2>Changes to GetTemplateObject</h2>
 
-<p>To enable the new API, this proposal modifies GetTemplateObject to add an internal slot to each
-template object it creates.</p>
+<p>To enable the new API, this proposal modifies GetTemplateObject to change the value of the new internal slot.</p>
 
 <emu-clause id="sec-gettemplateobject" aoid="GetTemplateObject">
   <h1>Runtime Semantics: GetTemplateObject ( _templateLiteral_ )</h1>
