@@ -12,7 +12,7 @@ contributors: Mike Samuel, Krzysztof Kotowicz
 
 <h2>Changes to ArrayCreate</h2>
 
-<p>To enable the new API, this proposal modifies ArrayCreate to add an internal slot to eacharray.</p>
+<p>To enable the new API, this proposal modifies ArrayCreate to add an internal slot to each array.</p>
 
 <emu-clause id="sec-arraycreate" aoid="ArrayCreate">
   <h1>ArrayCreate ( _length_ [ , _proto_ ] )</h1>
@@ -20,7 +20,7 @@ contributors: Mike Samuel, Krzysztof Kotowicz
   <emu-alg>
     1. If _length_ &gt; 2<sup>32</sup> - 1, throw a *RangeError* exception.
     1. If _proto_ is not present, set _proto_ to %Array.prototype%.
-    1. Let _A_ be ! MakeBasicObject(&laquo; [[Prototype]], [[Extensible]] &raquo;).
+    1. Let _A_ be ! MakeBasicObject(&laquo; [[Prototype]], [[Extensible]]<ins>, [[TemplateObject]]</ins> &raquo;).
     1. Set _A_.[[Prototype]] to _proto_.
     1. <ins>Set _A_.[[TemplateObject]] to *false*.</ins>
     1. Set _A_.[[DefineOwnProperty]] as specified in <emu-xref href="#sec-array-exotic-objects-defineownproperty-p-desc"></emu-xref>.
@@ -70,29 +70,18 @@ contributors: Mike Samuel, Krzysztof Kotowicz
   <p><ins>When the `isTemplateObject` method is called with argument _value_ the following steps are taken:</ins></p>
 
   <emu-alg>
-    1. <ins>Return ! IsTemplateObject(_value_).</ins>
-  </emu-alg>
-  <p><ins>The value of the `name` property of this function is `"isTemplateObject"`.</ins></p>
-
-  <emu-clause id="sec-IsTemplateObject">
-    <h1><ins>Runtime Semantics: IsTemplateObject ( _value_ )</ins></h1>
-
-    <p><ins>The abstract operation IsTemplateObject is called with a value, _value_, as an argument.
-      It performs the following steps:</ins></p>
-
-    <emu-alg aoid="IsTemplateObject">
       1. <ins>If Type(_value_) is Object and _value_.[[TemplateObject]] is *true* then</ins>
         1. <ins>return *true*.</ins>
       1. <ins>Return *false*.</ins>
-    </emu-alg>
+  </emu-alg>
+  <p><ins>The value of the `name` property of this function is `"isTemplateObject"`.</ins></p>
 
-    <emu-note>
-      <p><ins>IsTemplateObject is realm-agnostic.  Since template objects are frozen before
-        escaping GetTemplateObject, testing (IsTemplateObject(_x_) and _x_.[[Prototype]]
-        is the _realm_'s %ArrayPrototype%) is sufficient to determine whether an _x_ is
-        a template object in a particular _realm_.</ins></p>
-      <p><ins>In user code, `Array.isTemplateObject(x) && x instanceof Array` is an equivalent
-        test, assuming no changes to builtins.</ins></p>
-    </emu-note>
-  </emu-clause>
+  <emu-note>
+    <p><ins>IsTemplateObject is realm-agnostic.  Since template objects are frozen before
+      escaping GetTemplateObject, testing (IsTemplateObject(_x_) and _x_.[[Prototype]]
+      is the _realm_'s %ArrayPrototype%) is sufficient to determine whether an _x_ is
+      a template object in a particular _realm_.</ins></p>
+    <p><ins>In user code, `Array.isTemplateObject(x) && x instanceof Array` is an equivalent
+      test, assuming no changes to builtins.</ins></p>
+  </emu-note>
 </emu-clause>
