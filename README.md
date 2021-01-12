@@ -1,5 +1,7 @@
 # Array.isTemplateObject explainer (stage [2](https://tc39.es/process-document/))
 
+Authors: [@mikesamuel](https://github.com/mikesamuel), [@koto](https://github.com/koto)
+Champion: [@koto](https://github.com/koto)
 Reviewers: [@erights](https://github.com/erights), [@jridgewell](https://github.com/jridgewell)
 
 Provides a way for template tag functions to tell whether they were
