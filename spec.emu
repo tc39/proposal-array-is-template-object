@@ -74,7 +74,6 @@ contributors: Mike Samuel, Krzysztof Kotowicz
         1. <ins>return *true*.</ins>
       1. <ins>Return *false*.</ins>
   </emu-alg>
-  <p><ins>The value of the `name` property of this function is `"isTemplateObject"`.</ins></p>
 
   <emu-note>
     <p><ins>IsTemplateObject is realm-agnostic.  Since template objects are frozen before
