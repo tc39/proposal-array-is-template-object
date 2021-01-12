@@ -70,8 +70,8 @@ contributors: Mike Samuel, Krzysztof Kotowicz
   <p><ins>When the `isTemplateObject` method is called with argument _value_ the following steps are taken:</ins></p>
 
   <emu-alg>
-      1. <ins>If Type(_value_) is Object and _value_.[[TemplateObject]] is *true* then</ins>
-        1. <ins>return *true*.</ins>
+      1. <ins>If IsArray(_value_) is *true* and _value_.[[TemplateObject]] is *true* then</ins>
+        1. <ins>Return *true*.</ins>
       1. <ins>Return *false*.</ins>
   </emu-alg>
 
