@@ -1,3 +1,4 @@
+// TODO: Update for Array.prototype.isTemplateObject()
 // Check that the test262 tests do something sensible when run against
 // a known problematic stub implementation of Array.isTemplateObject.
 

@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
 <script src="./spec.js"></script>
 <pre class="metadata">
-title: Array.isTemplateObject
+title: Array.prototype.isTemplateObject
 stage: 2
 copyright: false
 contributors: Mike Samuel, Krzysztof Kotowicz
@@ -57,20 +57,16 @@ contributors: Mike Samuel, Krzysztof Kotowicz
 
 <h2>New APIs</h2>
 
-<p>This adds a builtin static method to Array to allow distinguishing template string literal objects</p>
+<p>This adds a builtin Array prototype method to allow distinguishing template string literal objects.</p>
 
-<p>Added under
-  <a href="https://tc39.es/ecma262/#sec-properties-of-the-array-constructor"
-     >Properties of the Array Constructor</a>:
-</p>
+<emu-clause id="sec-Array.prototype.isTemplateObject">
+  <h1><ins>Array.prototype.isTemplateObject()</ins></h1>
 
-<emu-clause id="sec-Array.isTemplateObject">
-  <h1><ins>Array.isTemplateObject ( _value_ )</ins></h1>
-
-  <p><ins>When the `isTemplateObject` method is called with argument _value_ the following steps are taken:</ins></p>
+  <p><ins>When the `isTemplateObject` method is called, the following steps are taken:</ins></p>
 
   <emu-alg>
-      1. <ins>If IsArray(_value_) is *true* and _value_.[[TemplateObject]] is *true* then</ins>
+      1. <ins>Let _O_ be ! ToObject(*this* value).</ins>
+      1. <ins>If IsArray(_O_) is *true* and _O_.[[TemplateObject]] is *true* then</ins>
         1. <ins>Return *true*.</ins>
       1. <ins>Return *false*.</ins>
   </emu-alg>
@@ -80,7 +76,7 @@ contributors: Mike Samuel, Krzysztof Kotowicz
       escaping GetTemplateObject, testing (IsTemplateObject(_x_) and _x_.[[Prototype]]
       is the _realm_'s %ArrayPrototype%) is sufficient to determine whether an _x_ is
       a template object in a particular _realm_.</ins></p>
-    <p><ins>In user code, `Array.isTemplateObject(x) && x instanceof Array` is an equivalent
+    <p><ins>In user code, `maybeTemplate.isTemplateObject() && maybeTemplate instanceof Array` is an equivalent
       test, assuming no changes to builtins.</ins></p>
   </emu-note>
 </emu-clause>

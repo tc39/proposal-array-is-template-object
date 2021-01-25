@@ -5,7 +5,7 @@ info: |
 es5id: TBD
 description: Applies Array.isTemplateObject to various inputs.
 --*/
-
+// TODO: Update for Array.prototype.isTemplateObject()
 // A template tag that applies the function under test
 // and returns its result.
 function directTag(strings) {

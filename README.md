@@ -37,8 +37,11 @@ This proposal would provide enough context to warn or error out when this
 is not the case.
 
 ```js
+// Capture early to detect instance method override.
+const { isTemplateObject } = Array.prototype;
+
 function (trustedStrings, ...untrustedArguments) {
-  if (Array.isTemplateObject(trustedStrings)
+  if (isTemplateObject.call(trustedStrings)
       // instanceof provides a same-Realm guarantee for early frozen objects.
       && trustedStrings instanceof Array) {
     // Proceed knowing that trustedStrings come from
@@ -57,7 +60,7 @@ const attackerControlledString = '((x) => x)`evil string`';
 // Naive code
 let x = eval(attackerControlledString)
 
-console.log(Array.isTemplateObject(x));
+console.log(x.isTemplateObject());
 ```
 
 Many other security assumptions break if an attacker can execute arbitrary code,
@@ -75,7 +78,7 @@ operation.
 ```js
 const { Array, TypeError } = globalThis;
 const { createPolicy } = trustedTypes;
-const { isTemplateObject } = Array;
+const { isTemplateObject } = Array.prototype;
 const { error: consoleErr } = console;
 
 /**
@@ -114,7 +117,7 @@ export trustedHTML = (() => {
   //
   // This assumes no attacker has eval.
   const trustedHTMLTagFunction = (strings) => {
-    if (isTemplateObject(strings) && strings instanceof Array) {
+    if (isTemplateObject.call(strings) && strings instanceof Array) {
       return createHTML(strings.raw[0]);
     }
     throw new TypeError("Expected template object");
