@@ -7,80 +7,136 @@
 title: Array.isTemplateObject
 stage: 2
 copyright: false
-contributors: Mike Samuel, Krzysztof Kotowicz
+contributors: Mike Samuel, Krzysztof Kotowicz, Jordan Harband, Daniel Ehrenberg
 </pre>
 
-<h2>Changes to ArrayCreate</h2>
+<emu-clause id="sec-ordinary-and-exotic-objects-behaviours" number="10">
+  <h1>Ordinary and Exotic Objects Behaviours</h1>
 
-<p>To enable the new API, this proposal modifies ArrayCreate to add an internal slot to each array.</p>
+  <emu-clause id="sec-built-in-exotic-object-internal-methods-and-slots" number="4">
+    <h1>Built-in Exotic Object Internal Methods and Slots</h1>
 
-<emu-clause id="sec-arraycreate" aoid="ArrayCreate">
-  <h1>ArrayCreate ( _length_ [ , _proto_ ] )</h1>
-  <p>The abstract operation ArrayCreate takes argument _length_ (a non-negative integer) and optional argument _proto_. It is used to specify the creation of new Array exotic objects. It performs the following steps when called:</p>
-  <emu-alg>
-    1. If _length_ &gt; 2<sup>32</sup> - 1, throw a *RangeError* exception.
-    1. If _proto_ is not present, set _proto_ to %Array.prototype%.
-    1. Let _A_ be ! MakeBasicObject(&laquo; [[Prototype]], [[Extensible]]<ins>, [[TemplateObject]]</ins> &raquo;).
-    1. Set _A_.[[Prototype]] to _proto_.
-    1. <ins>Set _A_.[[TemplateObject]] to *false*.</ins>
-    1. Set _A_.[[DefineOwnProperty]] as specified in <emu-xref href="#sec-array-exotic-objects-defineownproperty-p-desc"></emu-xref>.
-    1. Perform ! OrdinaryDefineOwnProperty(_A_, *"length"*, PropertyDescriptor { [[Value]]: 𝔽(_length_), [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
-    1. Return _A_.
-  </emu-alg>
+    <emu-clause id="sec-array-exotic-objects" number="2">
+      <h1>Array Exotic Objects</h1>
+
+      <emu-clause id="sec-arraycreate" type="abstract operation" number="2">
+        <h1>
+          ArrayCreate (
+            _length_: a non-negative integer,
+            optional _proto_: an Object,
+          ): either a normal completion containing an Array exotic object or a throw completion
+        </h1>
+        <dl class="header">
+          <dt>description</dt>
+          <dd>It is used to specify the creation of new Arrays.</dd>
+          <dt>skip global checks</dt>
+          <dd>true</dd>
+        </dl>
+
+        <emu-note type="editor">To enable the new API, this proposal modifies ArrayCreate to add an internal slot to each array.</emu-note>
+
+        <emu-alg>
+          1. If _length_ > 2<sup>32</sup> - 1, throw a *RangeError* exception.
+          1. If _proto_ is not present, set _proto_ to %Array.prototype%.
+          1. Let _A_ be MakeBasicObject(« [[Prototype]], [[Extensible]]<ins>, [[TemplateObject]]</ins> »).
+          1. Set _A_.[[Prototype]] to _proto_.
+          1. <ins>Set _A_.[[TemplateObject]] to *false*.</ins>
+          1. Set _A_.[[DefineOwnProperty]] as specified in <emu-xref href="#sec-array-exotic-objects-defineownproperty-p-desc"></emu-xref>.
+          1. Perform ! OrdinaryDefineOwnProperty(_A_, *"length"*, PropertyDescriptor { [[Value]]: 𝔽(_length_), [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
+          1. Return _A_.
+        </emu-alg>
+      </emu-clause>
+    </emu-clause>
+  </emu-clause>
 </emu-clause>
 
+<emu-clause id="sec-ecmascript-language-expressions" number="13">
+  <h1>ECMAScript Language: Expressions</h1>
 
-<h2>Changes to GetTemplateObject</h2>
+  <emu-clause id="sec-primary-expression" number="2">
+    <h1>Primary Expression</h1>
 
-<p>To enable the new API, this proposal modifies GetTemplateObject to change the value of the new internal slot.</p>
+    <emu-clause id="sec-template-literals" number="8">
+      <h1>Template Literals</h1>
 
-<emu-clause id="sec-gettemplateobject" aoid="GetTemplateObject">
-  <h1>Runtime Semantics: GetTemplateObject ( _templateLiteral_ )</h1>
-  <p>The abstract operation GetTemplateObject is called with a Parse Node, _templateLiteral_, as an argument. It performs the following steps:</p>
-  <emu-alg>
-    1. Let _realm_ be the current Realm Record.
-    1. Let _templateRegistry_ be _realm_.[[TemplateMap]].
-    1. For each element _e_ of _templateRegistry_, do
-      1. If _e_.[[Site]] is the same Parse Node as _templateLiteral_, then
-        1. Return _e_.[[Array]].
-    1. Let _rawStrings_ be TemplateStrings of _templateLiteral_ with argument *true*.
-    1. Let _cookedStrings_ be TemplateStrings of _templateLiteral_ with argument *false*.
-    1. Let _count_ be the number of elements in the List _cookedStrings_.
-    1. Assert: _count_ &le; 2<sup>32</sup> - 1.
-    1. Let _template_ be ! ArrayCreate(_count_).
-    1. <ins>Set _template_.[[TemplateObject]] to *true*.</ins>
-    1. Let _rawObj_ be ! ArrayCreate(_count_).
-    1. Let _index_ be 0.
-    1. ...
+      <emu-clause id="sec-gettemplateobject" type="abstract operation" number="4">
+        <h1>
+          GetTemplateObject (
+            _templateLiteral_: a Parse Node,
+          ): an Array
+        </h1>
+        <dl class="header">
+        </dl>
+
+        <emu-note type="editor">To enable the new API, this proposal modifies GetTemplateObject to change the value of the new internal slot.</emu-note>
+
+        <emu-alg>
+          1. Let _realm_ be the current Realm Record.
+          1. Let _templateRegistry_ be _realm_.[[TemplateMap]].
+          1. For each element _e_ of _templateRegistry_, do
+            1. If _e_.[[Site]] is the same Parse Node as _templateLiteral_, then
+              1. Return _e_.[[Array]].
+          1. Let _rawStrings_ be the TemplateStrings of _templateLiteral_ with argument *true*.
+          1. Assert: _rawStrings_ is a List of Strings.
+          1. Let _cookedStrings_ be the TemplateStrings of _templateLiteral_ with argument *false*.
+          1. Let _count_ be the number of elements in the List _cookedStrings_.
+          1. Assert: _count_ ≤ 2<sup>32</sup> - 1.
+          1. Let _template_ be ! ArrayCreate(_count_).
+          1. <ins>Set _template_.[[TemplateObject]] to *true*.</ins>
+          1. Let _rawObj_ be ! ArrayCreate(_count_).
+          1. Let _index_ be 0.
+          1. Repeat, while _index_ &lt; _count_,
+            1. Let _prop_ be ! ToString(𝔽(_index_)).
+            1. Let _cookedValue_ be _cookedStrings_[_index_].
+            1. Perform ! DefinePropertyOrThrow(_template_, _prop_, PropertyDescriptor { [[Value]]: _cookedValue_, [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false* }).
+            1. Let _rawValue_ be the String value _rawStrings_[_index_].
+            1. Perform ! DefinePropertyOrThrow(_rawObj_, _prop_, PropertyDescriptor { [[Value]]: _rawValue_, [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false* }).
+            1. Set _index_ to _index_ + 1.
+          1. Perform ! SetIntegrityLevel(_rawObj_, ~frozen~).
+          1. Perform ! DefinePropertyOrThrow(_template_, *"raw"*, PropertyDescriptor { [[Value]]: _rawObj_, [[Writable]]: *false*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
+          1. Perform ! SetIntegrityLevel(_template_, ~frozen~).
+          1. Append the Record { [[Site]]: _templateLiteral_, [[Array]]: _template_ } to _realm_.[[TemplateMap]].
+          1. Return _template_.
+        </emu-alg>
+        <emu-note>
+          <p>The creation of a template object cannot result in an abrupt completion.</p>
+        </emu-note>
+        <emu-note>
+          <p>Each |TemplateLiteral| in the program code of a realm is associated with a unique template object that is used in the evaluation of tagged Templates (<emu-xref href="#sec-template-literals-runtime-semantics-evaluation"></emu-xref>). The template objects are frozen and the same template object is used each time a specific tagged Template is evaluated. Whether template objects are created lazily upon first evaluation of the |TemplateLiteral| or eagerly prior to first evaluation is an implementation choice that is not observable to ECMAScript code.</p>
+        </emu-note>
+        <emu-note>
+          <p>Future editions of this specification may define additional non-enumerable properties of template objects.</p>
+        </emu-note>
+      </emu-clause>
+    </emu-clause>
+  </emu-clause>
 </emu-clause>
 
+<emu-clause id="sec-indexed-collections" number="23">
+  <h1>Indexed Collections</h1>
 
-<h2>New APIs</h2>
+  <emu-clause id="sec-array-objects" number="1">
+    <h1>Array Objects</h1>
 
-<p>This adds a builtin static method to Array to allow distinguishing template string literal objects</p>
+    <emu-clause id="sec-properties-of-the-array-constructor" number="2">
+      <h1>Properties of the Array Constructor</h1>
 
-<p>Added under
-  <a href="https://tc39.es/ecma262/#sec-properties-of-the-array-constructor"
-     >Properties of the Array Constructor</a>:
-</p>
+      <emu-clause id="sec-array.istemplateobject" number="3">
+        <h1><ins>Array.isTemplateObject ( _value_ )</ins></h1>
 
-<emu-clause id="sec-Array.isTemplateObject">
-  <h1><ins>Array.isTemplateObject ( _value_ )</ins></h1>
+        <p><ins>When the `isTemplateObject` method is called with argument _value_ the following steps are taken:</ins></p>
 
-  <p><ins>When the `isTemplateObject` method is called with argument _value_ the following steps are taken:</ins></p>
+        <emu-alg>
+            1. <ins>If ? IsArray(_value_) is *true* and _value_.[[TemplateObject]] is *true*, then</ins>
+              1. <ins>Return *true*.</ins>
+            1. <ins>Return *false*.</ins>
+        </emu-alg>
 
-  <emu-alg>
-      1. <ins>If IsArray(_value_) is *true* and _value_.[[TemplateObject]] is *true* then</ins>
-        1. <ins>Return *true*.</ins>
-      1. <ins>Return *false*.</ins>
-  </emu-alg>
-
-  <emu-note>
-    <p><ins>IsTemplateObject is realm-agnostic.  Since template objects are frozen before
-      escaping GetTemplateObject, testing (IsTemplateObject(_x_) and _x_.[[Prototype]]
-      is the _realm_'s %ArrayPrototype%) is sufficient to determine whether an _x_ is
-      a template object in a particular _realm_.</ins></p>
-    <p><ins>In user code, `Array.isTemplateObject(x) && x instanceof Array` is an equivalent
-      test, assuming no changes to builtins.</ins></p>
-  </emu-note>
+        <emu-note>
+          <p><ins>IsTemplateObject is realm-agnostic. Since template objects are frozen before escaping GetTemplateObject, testing (IsTemplateObject(_x_) and _x_.[[Prototype]] is the _realm_'s %Array.prototype%) is sufficient to determine whether an _x_ is a template object in a particular _realm_.</ins></p>
+          <p><ins>In user code, `Array.isTemplateObject(x) && x instanceof Array` is an equivalent test, assuming no changes to builtins.</ins></p>
+        </emu-note>
+      </emu-clause>
+    </emu-clause>
+  </emu-clause>
 </emu-clause>
