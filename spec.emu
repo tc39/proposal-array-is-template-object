@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
 <script src="./spec.js"></script>
 <pre class="metadata">
-title: Array.isTemplateObject
+title: Reflect.isTemplateObject
 stage: 2
 copyright: false
 contributors: Mike Samuel, Krzysztof Kotowicz, Jordan Harband, Daniel Ehrenberg
@@ -112,31 +112,27 @@ contributors: Mike Samuel, Krzysztof Kotowicz, Jordan Harband, Daniel Ehrenberg
   </emu-clause>
 </emu-clause>
 
-<emu-clause id="sec-indexed-collections" number="23">
-  <h1>Indexed Collections</h1>
+<emu-clause id="sec-reflection" number="28">
+  <h1>Reflection</h1>
 
-  <emu-clause id="sec-array-objects" number="1">
-    <h1>Array Objects</h1>
+  <emu-clause id="sec-reflect-object">
+    <h1>The Reflect Object</h1>
 
-    <emu-clause id="sec-properties-of-the-array-constructor" number="2">
-      <h1>Properties of the Array Constructor</h1>
+    <emu-clause id="sec-reflect.istemplateobject" number="10">
+      <h1><ins>Reflect.isTemplateObject ( _value_ )</ins></h1>
 
-      <emu-clause id="sec-array.istemplateobject" number="3">
-        <h1><ins>Array.isTemplateObject ( _value_ )</ins></h1>
+      <p><ins>When the `isTemplateObject` method is called with argument _value_ the following steps are taken:</ins></p>
 
-        <p><ins>When the `isTemplateObject` method is called with argument _value_ the following steps are taken:</ins></p>
+      <emu-alg>
+          1. <ins>If ? IsArray(_value_) is *true* and _value_.[[TemplateObject]] is *true*, then</ins>
+            1. <ins>Return *true*.</ins>
+          1. <ins>Return *false*.</ins>
+      </emu-alg>
 
-        <emu-alg>
-            1. <ins>If ? IsArray(_value_) is *true* and _value_.[[TemplateObject]] is *true*, then</ins>
-              1. <ins>Return *true*.</ins>
-            1. <ins>Return *false*.</ins>
-        </emu-alg>
-
-        <emu-note>
-          <p><ins>IsTemplateObject is realm-agnostic. Since template objects are frozen before escaping GetTemplateObject, testing (IsTemplateObject(_x_) and _x_.[[Prototype]] is the _realm_'s %Array.prototype%) is sufficient to determine whether an _x_ is a template object in a particular _realm_.</ins></p>
-          <p><ins>In user code, `Array.isTemplateObject(x) && x instanceof Array` is an equivalent test, assuming no changes to builtins.</ins></p>
-        </emu-note>
-      </emu-clause>
+      <emu-note>
+        <p><ins>IsTemplateObject is realm-agnostic. Since template objects are frozen before escaping GetTemplateObject, testing (IsTemplateObject(_x_) and _x_.[[Prototype]] is the _realm_'s %Array.prototype%) is sufficient to determine whether an _x_ is a template object in a particular _realm_.</ins></p>
+        <p><ins>In user code, `Reflect.isTemplateObject(x) && x instanceof Array` is an equivalent test, assuming no changes to builtins.</ins></p>
+      </emu-note>
     </emu-clause>
   </emu-clause>
 </emu-clause>

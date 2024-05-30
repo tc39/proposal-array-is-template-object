@@ -1,4 +1,4 @@
-# Array.isTemplateObject explainer (stage [2](https://tc39.es/process-document/))
+# Reflect.isTemplateObject (stage [2](https://tc39.es/process-document/))
 
 Authors: [@mikesamuel](https://github.com/mikesamuel), [@koto](https://github.com/koto)
 Champions: [@littledan](https://github.com/littledan), [@ljharb](https://github.com/ljharb)
@@ -34,7 +34,7 @@ This proposal would provide enough context to warn or error out when this is not
 
 ```js
 function (trustedStrings, ...untrustedArguments) {
-  if (Array.isTemplateObject(trustedStrings)
+  if (Reflect.isTemplateObject(trustedStrings)
       // instanceof provides a same-Realm guarantee for early frozen objects.
       && trustedStrings instanceof Array) {
     // Proceed knowing that trustedStrings come from
@@ -53,7 +53,7 @@ const attackerControlledString = '((x) => x)`evil string`';
 // Naive code
 let x = eval(attackerControlledString)
 
-console.log(Array.isTemplateObject(x));
+console.log(Reflect.isTemplateObject(x));
 ```
 
 Many other security assumptions break if an attacker can execute arbitrary code, so this check is still useful.
@@ -65,9 +65,9 @@ The sensitive operation is not directly accessible to the tag function's callers
 This assumes that TT's [first-come-first-serve name restrictions][TT-block] solve provisioning, letting only authorized callers access the sensitive operation.
 
 ```js
-const { Array, TypeError } = globalThis;
+const { Array, Reflect, TypeError } = globalThis;
 const { createPolicy } = trustedTypes;
-const { isTemplateObject } = Array;
+const { isTemplateObject } = Reflect;
 const { error: consoleErr } = console;
 
 /**
@@ -169,9 +169,9 @@ A polyfill is available in the [core-js](https://github.com/zloirock/core-js) li
 ## Tests
 
 The test262
-[draft tests](https://github.com/tc39/proposal-array-is-template-object/blob/master/test262/test/built-ins/Array/is-template-object.js)
+[draft tests](https://github.com/tc39/proposal-array-is-template-object/blob/master/test262/test/built-ins/Reflect/is-template-object.js)
 which would be added under
-[test/built-ins/Array](https://github.com/tc39/test262/tree/master/test/built-ins/Array)
+[test/built-ins/Reflect](https://github.com/tc39/test262/tree/master/test/built-ins/Reflect)
 
 ## Related Work
 

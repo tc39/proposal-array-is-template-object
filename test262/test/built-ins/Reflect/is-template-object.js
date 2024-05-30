@@ -1,15 +1,15 @@
 /*---
 info: |
-    Array.isTemplateObject returns true given a
+    Reflect.isTemplateObject returns true given a
     template tag strings object and false otherwise.
 es5id: TBD
-description: Applies Array.isTemplateObject to various inputs.
+description: Applies Reflect.isTemplateObject to various inputs.
 --*/
 
 // A template tag that applies the function under test
 // and returns its result.
 function directTag(strings) {
-  return Array.isTemplateObject(strings);
+  return Reflect.isTemplateObject(strings);
 }
 
 // A template tag that does the same but passes its
@@ -36,15 +36,15 @@ var posTestCases = [
   // It doesn't matter whether the strings were used with the tag that's running.
   [ 'indirect', () => indirectTag`bar` ],
   // Or whether there is even a tag function on the stack.
-  [ 'escaped', () => Array.isTemplateObject(escapedTemplateObject) ],
+  [ 'escaped', () => Reflect.isTemplateObject(escapedTemplateObject) ],
   [
     'called with null this',
-    () => Reflect.apply(Array.isTemplateObject, null, [ escapedTemplateObject ]),
+    () => Reflect.apply(Reflect.isTemplateObject, null, [ escapedTemplateObject ]),
   ],
   // IsTemplateObject is realm-agnostic
   [
     'cross-realm template objects',
-    () => Array.isTemplateObject(foreignTemplateObject),
+    () => Reflect.isTemplateObject(foreignTemplateObject),
   ],
 ];
 
@@ -85,7 +85,7 @@ var negTestCases = [
   [ 'function', () => directTag(directTag) ],
   // A proxy over a template string object is not a template string object.
   [ 'proxy', () => directTag(new Proxy(escapedTemplateObject, {})) ],
-  [ 'Array.prototype', () => Array.isTemplateObject(Array.prototype) ],
+  [ 'Array.prototype', () => Reflect.isTemplateObject(Array.prototype) ],
   // User code can't distinguish this case which is why this proposal adds value.
   [
     'forgery',
@@ -127,7 +127,7 @@ var negTestCases = [
               return Reflect.getPrototypeOf(...args);
             },
           }));
-      return Array.isTemplateObject(arg) || poked;
+      return Reflect.isTemplateObject(arg) || poked;
     }
   ],
   // Since a motivating use case is to identify strings that
@@ -137,7 +137,7 @@ var negTestCases = [
   [
     'same-realm template object idiom',
     () =>
-      Array.isTemplateObject(foreignTemplateObject)
+      Reflect.isTemplateObject(foreignTemplateObject)
       && foreignTemplateObject instanceof Array,
   ],
 ];
@@ -158,20 +158,20 @@ for (const [ message, f ] of negTestCases) {
 }
 
 if (falsePositives.length) {
-  $ERROR(`#1: Array.isTemplateObject producing spurious positive results: ${ falsePositives }`);
+  $ERROR(`#1: Reflect.isTemplateObject producing spurious positive results: ${ falsePositives }`);
 }
 if (falseNegatives.length) {
-  $ERROR(`#2: Array.isTemplateObject producing spurious negative results: ${ falseNegatives }`);
+  $ERROR(`#2: Reflect.isTemplateObject producing spurious negative results: ${ falseNegatives }`);
 }
-if (typeof Array.isTemplateObject !== 'function') {
-  $ERROR('#3: Array.isTemplateObject has wrong typeof');
+if (typeof Reflect.isTemplateObject !== 'function') {
+  $ERROR('#3: Reflect.isTemplateObject has wrong typeof');
 }
-if (Array.isTemplateObject.length !== 1) {
-  $ERROR('#4: Array.isTemplateObject has wrong length');
+if (Reflect.isTemplateObject.length !== 1) {
+  $ERROR('#4: Reflect.isTemplateObject has wrong length');
 }
-if (Array.isTemplateObject.name !== 'isTemplateObject') {
-  $ERROR('#5: Array.isTemplateObject has wrong name');
+if (Reflect.isTemplateObject.name !== 'isTemplateObject') {
+  $ERROR('#5: Reflect.isTemplateObject has wrong name');
 }
-if (Object.prototype.toString.call(Array.isTemplateObject) !== '[object Function]') {
-  $ERROR('#6: Array.isTemplateObject is not a normal function');
+if (Object.prototype.toString.call(Reflect.isTemplateObject) !== '[object Function]') {
+  $ERROR('#6: Reflect.isTemplateObject is not a normal function');
 }

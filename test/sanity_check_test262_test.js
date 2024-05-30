@@ -1,5 +1,5 @@
 // Check that the test262 tests do something sensible when run against
-// a known problematic stub implementation of Array.isTemplateObject.
+// a known problematic stub implementation of Reflect.isTemplateObject.
 
 const fs = require('fs');
 const path = require('path');
@@ -9,17 +9,17 @@ const { expect } = require('chai');
 describe('README.md', () => {
   describe('test262', () => {
     beforeEach(() => {
-      Array.isTemplateObject = require('is-template-object').implementation;
+      Reflect.isTemplateObject = require('is-template-object').implementation;
     });
     afterEach(() => {
-      delete Array.isTemplateObject;
+      delete Reflect.isTemplateObject;
     });
 
     it('runs, kind of', () => {
       const testContent = fs.readFileSync(
         path.join(
           __dirname, '..',
-          'test262', 'test', 'built-ins', 'Array', 'is-template-object.js'),
+          'test262', 'test', 'built-ins', 'Reflect', 'is-template-object.js'),
         { encoding: 'UTF-8' });
 
       // Stub out some of the API provided at
@@ -42,7 +42,7 @@ describe('README.md', () => {
 
       expect(test262stubErrorList)
         .to.deep.equal([
-          '#2: Array.isTemplateObject producing spurious negative results:'
+          '#2: Reflect.isTemplateObject producing spurious negative results:'
           + ' proxy,forgery,argument not poked'
         ]);
     });
