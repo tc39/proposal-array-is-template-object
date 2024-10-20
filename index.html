@@ -1,9 +1,22 @@
 <!doctype html>
-<head><meta charset="utf-8">
+<head><meta charset="utf-8"><meta property="og:image" content="https://tc39.es/ecmarkup/ecma-logo.png"><meta property="og:title" content="Reflect.isTemplateObject"><meta property="og:description" content="Ordinary and Exotic Objects Behaviours
+
+  
+    Built-in Exotic Object Internal Methods and Slots
+
+    
+      Array Exotic Objects
+
+      
+        
+          ArrayCreate (
+            _length_: a non-negative integer,
+            optional _proto_: an Object,
+          ): either a normal completion">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/base16/solarized-light.min.css"><link rel="stylesheet" href="./spec.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
 <script src="./spec.js"></script>
-<title>Array.isTemplateObject</title><script>'use strict';
+<title>Reflect.isTemplateObject</title><script>'use strict';
 let sdoBox = {
   init() {
     this.$alternativeId = null;
@@ -661,6 +674,7 @@ Menu.prototype.togglePinEntry = function (id) {
 };
 
 Menu.prototype.selectPin = function (num) {
+  if (num >= this.$pinList.children.length) return;
   document.location = this.$pinList.children[num].children[0].href;
 };
 
@@ -1442,6 +1456,7 @@ const counterByDepth = [];
 function addStepNumberText(
   ol,
   depth = 0,
+  indent = '',
   special = [...ol.classList].some(c => c.startsWith('nested-')),
 ) {
   let counter = !special && counterByDepth[depth];
@@ -1465,8 +1480,11 @@ function addStepNumberText(
   let i = (Number(ol.getAttribute('start')) || 1) - 1;
   for (const li of ol.children) {
     const marker = document.createElement('span');
-    marker.textContent = `${i < cache.length ? cache[i] : getTextForIndex(i)}. `;
+    const markerText = i < cache.length ? cache[i] : getTextForIndex(i);
+    const extraIndent = ' '.repeat(markerText.length + 2);
+    marker.textContent = `${indent}${markerText}. `;
     marker.setAttribute('aria-hidden', 'true');
+    marker.setAttribute('class', 'list-marker');
     const attributesContainer = li.querySelector('.attributes-tag');
     if (attributesContainer == null) {
       li.prepend(marker);
@@ -1474,7 +1492,7 @@ function addStepNumberText(
       attributesContainer.insertAdjacentElement('afterend', marker);
     }
     for (const sublist of li.querySelectorAll(':scope > ol')) {
-      addStepNumberText(sublist, depth + 1, special);
+      addStepNumberText(sublist, depth + 1, indent + extraIndent, special);
     }
     i++;
   }
@@ -1484,6 +1502,52 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('emu-alg > ol').forEach(ol => {
     addStepNumberText(ol);
   });
+});
+
+// Omit indendation when copying a single algorithm step.
+document.addEventListener('copy', evt => {
+  // Construct a DOM from the selection.
+  const doc = document.implementation.createHTMLDocument('');
+  const domRoot = doc.createElement('div');
+  const html = evt.clipboardData.getData('text/html');
+  if (html) {
+    domRoot.innerHTML = html;
+  } else {
+    const selection = getSelection();
+    const singleRange = selection?.rangeCount === 1 && selection.getRangeAt(0);
+    const container = singleRange?.commonAncestorContainer;
+    if (!container?.querySelector?.('.list-marker')) {
+      return;
+    }
+    domRoot.append(singleRange.cloneContents());
+  }
+
+  // Preserve the indentation if there is no hidden list marker, or if selection
+  // of more than one step is indicated by either multiple such markers or by
+  // visible text before the first one.
+  const listMarkers = domRoot.querySelectorAll('.list-marker');
+  if (listMarkers.length !== 1) {
+    return;
+  }
+  const treeWalker = document.createTreeWalker(domRoot, undefined, {
+    acceptNode(node) {
+      return node.nodeType === Node.TEXT_NODE || node === listMarkers[0]
+        ? NodeFilter.FILTER_ACCEPT
+        : NodeFilter.FILTER_SKIP;
+    },
+  });
+  while (treeWalker.nextNode()) {
+    const node = treeWalker.currentNode;
+    if (node.nodeType === Node.ELEMENT_NODE) break;
+    if (/\S/u.test(node.data)) return;
+  }
+
+  // Strip leading indentation from the plain text representation.
+  evt.clipboardData.setData('text/plain', domRoot.textContent.trimStart());
+  if (!html) {
+    evt.clipboardData.setData('text/html', domRoot.innerHTML);
+  }
+  evt.preventDefault();
 });
 
 'use strict';
@@ -1559,7 +1623,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 let sdoMap = JSON.parse(`{}`);
-let biblio = JSON.parse(`{"refsByClause":{"sec-gettemplateobject":["_ref_0","_ref_1"],"sec-array.istemplateobject":["_ref_2"]},"entries":[{"type":"op","aoid":"ArrayCreate","refId":"sec-arraycreate"},{"type":"clause","id":"sec-arraycreate","title":"ArrayCreate ( length [ , proto ] )","titleHTML":"ArrayCreate ( <var>length</var> [ , <var>proto</var> ] )","number":"10.4.2.2","referencingIds":["_ref_0","_ref_1"]},{"type":"clause","id":"sec-array-exotic-objects","titleHTML":"Array Exotic Objects","number":"10.4.2"},{"type":"clause","id":"sec-built-in-exotic-object-internal-methods-and-slots","titleHTML":"Built-in Exotic Object Internal Methods and Slots","number":"10.4"},{"type":"clause","id":"sec-ordinary-and-exotic-objects-behaviours","titleHTML":"Ordinary and Exotic Objects Behaviours","number":"10"},{"type":"op","aoid":"GetTemplateObject","refId":"sec-gettemplateobject"},{"type":"clause","id":"sec-gettemplateobject","title":"GetTemplateObject ( templateLiteral )","titleHTML":"GetTemplateObject ( <var>templateLiteral</var> )","number":"13.2.8.4","referencingIds":["_ref_2"]},{"type":"clause","id":"sec-template-literals","titleHTML":"Template Literals","number":"13.2.8"},{"type":"clause","id":"sec-primary-expression","titleHTML":"Primary Expression","number":"13.2"},{"type":"clause","id":"sec-ecmascript-language-expressions","titleHTML":"ECMAScript Language: Expressions","number":"13"},{"type":"clause","id":"sec-array.istemplateobject","title":"Array.isTemplateObject ( value )","titleHTML":"<ins>Array.isTemplateObject ( <var>value</var> )</ins>","number":"23.1.2.3"},{"type":"clause","id":"sec-properties-of-the-array-constructor","titleHTML":"Properties of the Array Constructor","number":"23.1.2"},{"type":"clause","id":"sec-array-objects","titleHTML":"Array Objects","number":"23.1"},{"type":"clause","id":"sec-indexed-collections","titleHTML":"Indexed Collections","number":"23"}]}`);
+let biblio = JSON.parse(`{"refsByClause":{"sec-gettemplateobject":["_ref_0","_ref_1"],"sec-reflect.istemplateobject":["_ref_2"]},"entries":[{"type":"op","aoid":"ArrayCreate","refId":"sec-arraycreate"},{"type":"clause","id":"sec-arraycreate","title":"ArrayCreate ( length [ , proto ] )","titleHTML":"ArrayCreate ( <var>length</var> [ , <var>proto</var> ] )","number":"10.4.2.2","referencingIds":["_ref_0","_ref_1"]},{"type":"clause","id":"sec-array-exotic-objects","titleHTML":"Array Exotic Objects","number":"10.4.2"},{"type":"clause","id":"sec-built-in-exotic-object-internal-methods-and-slots","titleHTML":"Built-in Exotic Object Internal Methods and Slots","number":"10.4"},{"type":"clause","id":"sec-ordinary-and-exotic-objects-behaviours","titleHTML":"Ordinary and Exotic Objects Behaviours","number":"10"},{"type":"op","aoid":"GetTemplateObject","refId":"sec-gettemplateobject"},{"type":"clause","id":"sec-gettemplateobject","title":"GetTemplateObject ( templateLiteral )","titleHTML":"GetTemplateObject ( <var>templateLiteral</var> )","number":"13.2.8.4","referencingIds":["_ref_2"]},{"type":"clause","id":"sec-template-literals","titleHTML":"Template Literals","number":"13.2.8"},{"type":"clause","id":"sec-primary-expression","titleHTML":"Primary Expression","number":"13.2"},{"type":"clause","id":"sec-ecmascript-language-expressions","titleHTML":"ECMAScript Language: Expressions","number":"13"},{"type":"clause","id":"sec-reflect.istemplateobject","title":"Reflect.isTemplateObject ( value )","titleHTML":"<ins>Reflect.isTemplateObject ( <var>value</var> )</ins>","number":"28.1.10"},{"type":"clause","id":"sec-reflect-object","titleHTML":"The Reflect Object","number":"28.1"},{"type":"clause","id":"sec-reflection","titleHTML":"Reflection","number":"28"}]}`);
 ;let usesMultipage = false</script><style>/* IBM Plex fonts (Latin subset) have been downloaded from Google Fonts and modified to add support back in for the `zero` substitution (slashed zeroes) */
 
 /* https://fonts.googleapis.com/css2?family=IBM%20Plex%20Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap */
@@ -1687,6 +1751,7 @@ body.oldtoc {
 
 span[aria-hidden='true'] {
   font-size: 0;
+  white-space: pre;
 }
 
 a {
@@ -1783,6 +1848,10 @@ var {
 var.field {
   font: inherit;
   color: inherit;
+}
+/* suppress line break opportunities between `.` and `[[FieldName]]` */
+var.field::before {
+  content: '\2060'
 }
 
 var.referenced {
@@ -2989,7 +3058,7 @@ li.menu-search-result-term:before {
 }
 </style><style>@media print {
 body {
-  font-family: Arial;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 10pt;
   background: #fff;
   color: #000;
@@ -3040,6 +3109,11 @@ emu-figure img {
   max-width: none;
 }
 
+#toc a,
+#toc var {
+  color: #000;
+}
+
 #toc a[href] {
   background: #fff;
   padding-right: 0.5em;
@@ -3068,6 +3142,10 @@ emu-figure img {
   display: none;
 }
 
+#toc > ol > li {
+  margin-top: 1ex;
+}
+
 #toc,
 #spec-container > emu-intro,
 #spec-container > emu-annex {
@@ -3092,7 +3170,8 @@ emu-table th,
 emu-table td,
 emu-alg li,
 pre,
-h1 {
+h1,
+#metadata-block {
   break-inside: avoid;
 }
 
@@ -3221,7 +3300,7 @@ emu-intro {
 </ul></div><div id="menu-toggle"><svg xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%; stroke:currentColor" viewBox="0 0 120 120" width="54" height="54">
       <title>Menu</title>
       <path stroke-width="10" stroke-linecap="round" d="M30,60 h60  M30,30 m0,5 h60  M30,90 m0,-5 h60"></path>
-    </svg></div><div id="menu-spacer" class="menu-spacer"></div><div id="menu"><div id="menu-search"><input type="text" id="menu-search-box" placeholder="Search..."><div id="menu-search-results" class="inactive"></div></div><div id="menu-pins"><div class="menu-pane-header">Pins<button class="unpin-all">clear</button></div><ul id="menu-pins-list"></ul></div><div class="menu-pane-header">Table of Contents</div><div id="menu-toc"><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-ordinary-and-exotic-objects-behaviours" title="Ordinary and Exotic Objects Behaviours"><span class="secnum">10</span> Ordinary and Exotic Objects Behaviours</a><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-built-in-exotic-object-internal-methods-and-slots" title="Built-in Exotic Object Internal Methods and Slots"><span class="secnum">10.4</span> Built-in Exotic Object Internal Methods and Slots</a><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-array-exotic-objects" title="Array Exotic Objects"><span class="secnum">10.4.2</span> Array Exotic Objects</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-arraycreate" title="ArrayCreate ( length [ , proto ] )"><span class="secnum">10.4.2.2</span> ArrayCreate ( <var>length</var> [ , <var>proto</var> ] )</a></li></ol></li></ol></li></ol></li><li><span class="item-toggle">+</span><a href="#sec-ecmascript-language-expressions" title="ECMAScript Language: Expressions"><span class="secnum">13</span> ECMAScript Language: Expressions</a><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-primary-expression" title="Primary Expression"><span class="secnum">13.2</span> Primary Expression</a><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-template-literals" title="Template Literals"><span class="secnum">13.2.8</span> Template Literals</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-gettemplateobject" title="GetTemplateObject ( templateLiteral )"><span class="secnum">13.2.8.4</span> GetTemplateObject ( <var>templateLiteral</var> )</a></li></ol></li></ol></li></ol></li><li><span class="item-toggle">+</span><a href="#sec-indexed-collections" title="Indexed Collections"><span class="secnum">23</span> Indexed Collections</a><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-array-objects" title="Array Objects"><span class="secnum">23.1</span> Array Objects</a><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-properties-of-the-array-constructor" title="Properties of the Array Constructor"><span class="secnum">23.1.2</span> Properties of the Array Constructor</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-array.istemplateobject" title="Array.isTemplateObject ( value )"><span class="secnum">23.1.2.3</span> <ins>Array.isTemplateObject ( <var>value</var> )</ins></a></li></ol></li></ol></li></ol></li></ol></div></div><div id="spec-container"><h1 class="version">Stage 2 Draft / May 30, 2024</h1><h1 class="title">Array.isTemplateObject</h1>
+    </svg></div><div id="menu-spacer" class="menu-spacer"></div><div id="menu"><div id="menu-search"><input type="text" id="menu-search-box" placeholder="Search..."><div id="menu-search-results" class="inactive"></div></div><div id="menu-pins"><div class="menu-pane-header">Pins<button class="unpin-all">clear</button></div><ul id="menu-pins-list"></ul></div><div class="menu-pane-header">Table of Contents</div><div id="menu-toc"><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-ordinary-and-exotic-objects-behaviours" title="Ordinary and Exotic Objects Behaviours"><span class="secnum">10</span> Ordinary and Exotic Objects Behaviours</a><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-built-in-exotic-object-internal-methods-and-slots" title="Built-in Exotic Object Internal Methods and Slots"><span class="secnum">10.4</span> Built-in Exotic Object Internal Methods and Slots</a><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-array-exotic-objects" title="Array Exotic Objects"><span class="secnum">10.4.2</span> Array Exotic Objects</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-arraycreate" title="ArrayCreate ( length [ , proto ] )"><span class="secnum">10.4.2.2</span> ArrayCreate ( <var>length</var> [ , <var>proto</var> ] )</a></li></ol></li></ol></li></ol></li><li><span class="item-toggle">+</span><a href="#sec-ecmascript-language-expressions" title="ECMAScript Language: Expressions"><span class="secnum">13</span> ECMAScript Language: Expressions</a><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-primary-expression" title="Primary Expression"><span class="secnum">13.2</span> Primary Expression</a><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-template-literals" title="Template Literals"><span class="secnum">13.2.8</span> Template Literals</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-gettemplateobject" title="GetTemplateObject ( templateLiteral )"><span class="secnum">13.2.8.4</span> GetTemplateObject ( <var>templateLiteral</var> )</a></li></ol></li></ol></li></ol></li><li><span class="item-toggle">+</span><a href="#sec-reflection" title="Reflection"><span class="secnum">28</span> Reflection</a><ol class="toc"><li><span class="item-toggle">+</span><a href="#sec-reflect-object" title="The Reflect Object"><span class="secnum">28.1</span> The Reflect Object</a><ol class="toc"><li><span class="item-toggle-none"></span><a href="#sec-reflect.istemplateobject" title="Reflect.isTemplateObject ( value )"><span class="secnum">28.1.10</span> <ins>Reflect.isTemplateObject ( <var>value</var> )</ins></a></li></ol></li></ol></li></ol></div></div><div id="spec-container"><h1 class="version">Stage 2 Draft / October 20, 2024</h1><h1 class="title">Reflect.isTemplateObject</h1>
 
 <emu-clause id="sec-ordinary-and-exotic-objects-behaviours" number="10">
   <h1><span class="secnum">10</span> Ordinary and Exotic Objects Behaviours</h1>
@@ -3278,27 +3357,23 @@ emu-intro {
   </emu-clause>
 </emu-clause>
 
-<emu-clause id="sec-indexed-collections" number="23">
-  <h1><span class="secnum">23</span> Indexed Collections</h1>
+<emu-clause id="sec-reflection" number="28">
+  <h1><span class="secnum">28</span> Reflection</h1>
 
-  <emu-clause id="sec-array-objects" number="1">
-    <h1><span class="secnum">23.1</span> Array Objects</h1>
+  <emu-clause id="sec-reflect-object">
+    <h1><span class="secnum">28.1</span> The Reflect Object</h1>
 
-    <emu-clause id="sec-properties-of-the-array-constructor" number="2">
-      <h1><span class="secnum">23.1.2</span> Properties of the Array Constructor</h1>
+    <emu-clause id="sec-reflect.istemplateobject" number="10">
+      <h1><span class="secnum">28.1.10</span> <ins>Reflect.isTemplateObject ( <var>value</var> )</ins></h1>
 
-      <emu-clause id="sec-array.istemplateobject" number="3">
-        <h1><span class="secnum">23.1.2.3</span> <ins>Array.isTemplateObject ( <var>value</var> )</ins></h1>
+      <p><ins>When the <code>isTemplateObject</code> method is called with argument <var>value</var> the following steps are taken:</ins></p>
 
-        <p><ins>When the <code>isTemplateObject</code> method is called with argument <var>value</var> the following steps are taken:</ins></p>
+      <emu-alg><ol><li><ins>If ?&nbsp;<emu-xref aoid="IsArray"><a href="https://tc39.es/ecma262/#sec-isarray">IsArray</a></emu-xref>(<var>value</var>) is <emu-val>true</emu-val> and <var>value</var>.<var class="field">[[TemplateObject]]</var> is <emu-val>true</emu-val>, then</ins><ol><li><ins>Return <emu-val>true</emu-val>.</ins></li></ol></li><li><ins>Return <emu-val>false</emu-val>.</ins></li></ol></emu-alg>
 
-        <emu-alg><ol><li><ins>If ?&nbsp;<emu-xref aoid="IsArray"><a href="https://tc39.es/ecma262/#sec-isarray">IsArray</a></emu-xref>(<var>value</var>) is <emu-val>true</emu-val> and <var>value</var>.<var class="field">[[TemplateObject]]</var> is <emu-val>true</emu-val>, then</ins><ol><li><ins>Return <emu-val>true</emu-val>.</ins></li></ol></li><li><ins>Return <emu-val>false</emu-val>.</ins></li></ol></emu-alg>
-
-        <emu-note><span class="note">Note</span><div class="note-contents">
-          <p><ins>IsTemplateObject is <emu-xref href="#realm"><a href="https://tc39.es/ecma262/#realm">realm</a></emu-xref>-agnostic. Since template objects are frozen before escaping <emu-xref aoid="GetTemplateObject" id="_ref_2"><a href="#sec-gettemplateobject">GetTemplateObject</a></emu-xref>, testing (IsTemplateObject(<var>x</var>) and <var>x</var>.<var class="field">[[Prototype]]</var> is the <var>realm</var>'s <emu-xref href="#sec-properties-of-the-array-prototype-object"><a href="https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object">%Array.prototype%</a></emu-xref>) is sufficient to determine whether an <var>x</var> is a template object in a particular <var>realm</var>.</ins></p>
-          <p><ins>In user code, <code>Array.isTemplateObject(x) &amp;&amp; x instanceof Array</code> is an equivalent test, assuming no changes to builtins.</ins></p>
-        </div></emu-note>
-      </emu-clause>
+      <emu-note><span class="note">Note</span><div class="note-contents">
+        <p><ins>IsTemplateObject is <emu-xref href="#realm"><a href="https://tc39.es/ecma262/#realm">realm</a></emu-xref>-agnostic. Since template objects are frozen before escaping <emu-xref aoid="GetTemplateObject" id="_ref_2"><a href="#sec-gettemplateobject">GetTemplateObject</a></emu-xref>, testing (IsTemplateObject(<var>x</var>) and <var>x</var>.<var class="field">[[Prototype]]</var> is the <var>realm</var>'s <emu-xref href="#sec-properties-of-the-array-prototype-object"><a href="https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object">%Array.prototype%</a></emu-xref>) is sufficient to determine whether an <var>x</var> is a template object in a particular <var>realm</var>.</ins></p>
+        <p><ins>In user code, <code>Reflect.isTemplateObject(x) &amp;&amp; x instanceof Array</code> is an equivalent test, assuming no changes to builtins.</ins></p>
+      </div></emu-note>
     </emu-clause>
   </emu-clause>
 </emu-clause>
