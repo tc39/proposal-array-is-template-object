@@ -118,7 +118,7 @@ export trustedHTML = (() => {
 })()
 ```
 
-Without `isArrayTemplate`, this can be bypassed:
+Without `isTemplateObject`, this can be bypassed:
 
 ```js
 // A naive, but non-malicious function.
