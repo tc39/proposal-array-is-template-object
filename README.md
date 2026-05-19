@@ -1,4 +1,7 @@
-# Reflect.isTemplateObject (stage [2](https://tc39.es/process-document/))
+# Reflect.isTemplateObject (withdrawn)
+
+> [!WARNING]
+> [Withdrawn per 2026.05.19 TC39](https://github.com/tc39/proposals/commit/e605e9b8bb3aff999a76cf887d0cd15e69d6fe6d)
 
 Authors: [@mikesamuel](https://github.com/mikesamuel), [@koto](https://github.com/koto)
 Champions: [@littledan](https://github.com/littledan), [@ljharb](https://github.com/ljharb)
